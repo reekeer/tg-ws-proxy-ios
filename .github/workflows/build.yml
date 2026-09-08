@@ -34,17 +34,18 @@ jobs:
           cat << 'EOF' > patch_audio.py
           import os
 
-          # Код хака на Swift (Генератор тишины через AVAudioEngine + Авторестарт)
+          # Код хака на Swift (Генератор тишины + Удержание жизни через Background Task)
           audio_code = """
           import AVFoundation
+          import UIKit
 
           class SilentAudioEngine {
               static let shared = SilentAudioEngine()
               private var engine = AVAudioEngine()
               private var observer: Any?
+              private var bgTask: UIBackgroundTaskIdentifier = .invalid
               
               init() {
-                  // Слушаем прерывания (звонки, голосовые, использование микрофона)
                   observer = NotificationCenter.default.addObserver(
                       forName: AVAudioSession.interruptionNotification,
                       object: nil,
@@ -55,10 +56,25 @@ jobs:
                             let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
                             let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
                       
-                      // Если прерывание закончилось, перезапускаем аудио движок
-                      if type == .ended {
-                          try? AVAudioSession.sharedInstance().setActive(true)
-                          try? self.engine.start()
+                      DispatchQueue.main.async {
+                          if type == .began {
+                              // Запрашиваем у iOS 30 секунд жизни в фоне на время прерывания
+                              self.bgTask = UIApplication.shared.beginBackgroundTask(withName: "KeepAliveTask") {
+                                  // Если время вышло, закрываем таску
+                                  UIApplication.shared.endBackgroundTask(self.bgTask)
+                                  self.bgTask = .invalid
+                              }
+                          } else if type == .ended {
+                              // Микрофон свободен — перезапускаем звук
+                              try? AVAudioSession.sharedInstance().setActive(true)
+                              try? self.engine.start()
+                              
+                              // Звук запущен, фоновая задача больше не нужна
+                              if self.bgTask != .invalid {
+                                  UIApplication.shared.endBackgroundTask(self.bgTask)
+                                  self.bgTask = .invalid
+                              }
+                          }
                       }
                   }
               }
@@ -80,15 +96,8 @@ jobs:
                   engine.connect(srcNode, to: engine.mainMixerNode, format: nil)
                   try? engine.start()
               }
-              
-              deinit {
-                  if let observer = observer {
-                      NotificationCenter.default.removeObserver(observer)
-                  }
-              }
           }
           """
-
           app_file = None
           # Ищем файл с главной точкой входа SwiftUI во всем проекте ios/
           for root, dirs, files in os.walk("ios"):
