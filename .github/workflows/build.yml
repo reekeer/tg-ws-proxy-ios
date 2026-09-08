@@ -34,14 +34,34 @@ jobs:
           cat << 'EOF' > patch_audio.py
           import os
 
-          # Код хака на Swift (Генератор тишины через AVAudioEngine)
+          # Код хака на Swift (Генератор тишины через AVAudioEngine + Авторестарт)
           audio_code = """
           import AVFoundation
 
           class SilentAudioEngine {
               static let shared = SilentAudioEngine()
               private var engine = AVAudioEngine()
-              private var player = AVAudioPlayerNode()
+              private var observer: Any?
+              
+              init() {
+                  // Слушаем прерывания (звонки, голосовые, использование микрофона)
+                  observer = NotificationCenter.default.addObserver(
+                      forName: AVAudioSession.interruptionNotification,
+                      object: nil,
+                      queue: nil
+                  ) { [weak self] notification in
+                      guard let self = self,
+                            let userInfo = notification.userInfo,
+                            let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+                      
+                      // Если прерывание закончилось, перезапускаем аудио движок
+                      if type == .ended {
+                          try? AVAudioSession.sharedInstance().setActive(true)
+                          try? self.engine.start()
+                      }
+                  }
+              }
               
               func start() {
                   let session = AVAudioSession.sharedInstance()
@@ -60,6 +80,12 @@ jobs:
                   engine.connect(srcNode, to: engine.mainMixerNode, format: nil)
                   try? engine.start()
               }
+              
+              deinit {
+                  if let observer = observer {
+                      NotificationCenter.default.removeObserver(observer)
+                  }
+              }
           }
           """
 
@@ -71,10 +97,10 @@ jobs:
                       path = os.path.join(root, file)
                       with open(path, "r", errors="ignore") as f:
                           content = f.read()
-                      if "@main" in content and "some Scene" in content:
-                          app_file = path
-                          print(f"Found main app file at: {app_file}")
-                          break
+                          if "@main" in content and "some Scene" in content:
+                              app_file = path
+                              print(f"Found main app file at: {app_file}")
+                              break
               if app_file:
                   break
 
@@ -90,10 +116,8 @@ jobs:
           
           # Встраиваем запуск плеера в инициализатор
           if "init(" in content:
-              # Если init уже есть, вшиваем запуск в начало первой открывающей фигурной скобки
               content = content.replace("init(", "init() {\n        SilentAudioEngine.shared.start()\n    }\n    // patched init(")
           else:
-              # Если init нет, встраиваем его прямо перед главной сценой body
               content = content.replace("var body: some Scene {", "init() {\n        SilentAudioEngine.shared.start()\n    }\n    var body: some Scene {")
 
           with open(app_file, "w") as f:
@@ -102,8 +126,6 @@ jobs:
           EOF
           
           python3 patch_audio.py
-
-
 
       - name: Install Rust iOS Target
         run: rustup target add aarch64-apple-ios
