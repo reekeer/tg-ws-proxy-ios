@@ -12,6 +12,16 @@
         }
       }
     },
+    "%@ (%lld)" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$lld)"
+          }
+        }
+      }
+    },
     "%@ %lld" : {
       "localizations" : {
         "ru" : {
@@ -60,6 +70,17 @@
         }
       }
     },
+    "GPLv3 (ядро) · MIT (оригинал)" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPLv3 (core) · MIT (original)"
+          }
+        }
+      }
+    },
     "Liquid Glass" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -104,6 +125,9 @@
         }
       }
     },
+    "t" : {
+
+    },
     "Telegram → localhost → WSS → Telegram DC" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -138,6 +162,7 @@
       }
     },
     "TG WS Proxy" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -268,6 +293,17 @@
         }
       }
     },
+    "Геопозиция: нужен режим «Всегда»" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location: “Always” required"
+          }
+        }
+      }
+    },
     "Главная" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -297,6 +333,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diagnostics"
+          }
+        }
+      }
+    },
+    "Домены CF Worker" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CF Worker domains"
           }
         }
       }
@@ -586,6 +633,7 @@
       }
     },
     "Обновить список Workers" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -596,6 +644,7 @@
       }
     },
     "Обновление…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -710,6 +759,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Errors"
+          }
+        }
+      }
+    },
+    "Перезапустить интерфейс" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart the interface"
           }
         }
       }
@@ -934,6 +994,17 @@
         }
       }
     },
+    "Репозиторий" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repository"
+          }
+        }
+      }
+    },
     "Розовый" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1065,6 +1136,17 @@
         }
       }
     },
+    "Список пуст" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The list is empty"
+          }
+        }
+      }
+    },
     "Строк:" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1120,6 +1202,61 @@
         }
       }
     },
+    "Удерживать прокси в фоне" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep the proxy alive in the background"
+          }
+        }
+      }
+    },
+    "Фон выключен: прокси работает, пока приложение открыто." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background hold is off: the proxy runs while the app is open."
+          }
+        }
+      }
+    },
+    "Фон: геопозиция." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background: location updates."
+          }
+        }
+      }
+    },
+    "Фон: нужен доступ к геопозиции в режиме «Всегда»." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background: location access must be set to “Always”."
+          }
+        }
+      }
+    },
+    "Фон: системный VPN-туннель." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background: system VPN tunnel."
+          }
+        }
+      }
+    },
     "Язык" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1138,116 +1275,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App language"
-          }
-        }
-      }
-    },
-    "Удерживать прокси в фоне" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep the proxy alive in the background"
-          }
-        }
-      }
-    },
-    "Фон: системный VPN-туннель." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Background: system VPN tunnel."
-          }
-        }
-      }
-    },
-    "Фон: геопозиция." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Background: location updates."
-          }
-        }
-      }
-    },
-    "Фон: нужен доступ к геопозиции в режиме «Всегда»." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Background: location access must be set to “Always”."
-          }
-        }
-      }
-    },
-    "Фон выключен: прокси работает, пока приложение открыто." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Background hold is off: the proxy runs while the app is open."
-          }
-        }
-      }
-    },
-    "Геопозиция: нужен режим «Всегда»" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Location: “Always” required"
-          }
-        }
-      }
-    },
-    "Перезапустить интерфейс" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restart the interface"
-          }
-        }
-      }
-    },
-    "GPLv3 (ядро) · MIT (оригинал)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GPLv3 (core) · MIT (original)"
-          }
-        }
-      }
-    },
-    "Репозиторий" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repository"
-          }
-        }
-      }
-    },
-    "Домены CF Worker" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "CF Worker domains"
-          }
-        }
-      }
-    },
-    "Список пуст" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The list is empty"
           }
         }
       }

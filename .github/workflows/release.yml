@@ -39,5 +39,6 @@ jobs:
           gh release create "$TAG" \
             --title "$TAG" \
             --notes-file .github/release-notes.md \
+            --generate-notes \
             dist/TgWsProxy-free.ipa \
             dist/TgWsProxy-vpn.ipa
