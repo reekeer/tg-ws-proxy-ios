@@ -25,20 +25,11 @@
 		100000000000000000000137 /* LogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000238 /* LogStore.swift */; };
 		100000000000000000000138 /* LogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000239 /* LogsView.swift */; };
 		100000000000000000000139 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023A /* NotificationManager.swift */; };
-		10000000000000000000013A /* ProxyAppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023B /* ProxyAppIntents.swift */; };
-		10000000000000000000013B /* ProxyActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023C /* ProxyActivityAttributes.swift */; };
-		10000000000000000000013C /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023D /* ActivityManager.swift */; };
 		10000000000000000000013D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023E /* Localizable.xcstrings */; };
-		10000000000000000000013E /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023F /* DeepLinkRouter.swift */; };
 		10000000000000000000013F /* BackgroundKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000240 /* BackgroundKeeper.swift */; };
 		200000000000000000000101 /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000201 /* PacketTunnelProvider.swift */; };
 		200000000000000000000102 /* NativeProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000202 /* NativeProxy.swift */; };
 		200000000000000000000103 /* ProxyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000203 /* ProxyConfiguration.swift */; };
-		300000000000000000000101 /* StatusWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000201 /* StatusWidgetsBundle.swift */; };
-		300000000000000000000102 /* ProxyStatusWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000202 /* ProxyStatusWidget.swift */; };
-		300000000000000000000103 /* ProxyLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000203 /* ProxyLiveActivity.swift */; };
-		300000000000000000000104 /* ProxyControlWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000204 /* ProxyControlWidget.swift */; };
-		300000000000000000000105 /* ProxyActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023C /* ProxyActivityAttributes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,24 +52,12 @@
 		100000000000000000000238 /* LogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logs/LogStore.swift; sourceTree = "<group>"; };
 		100000000000000000000239 /* LogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logs/LogsView.swift; sourceTree = "<group>"; };
 		10000000000000000000023A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy/NotificationManager.swift; sourceTree = "<group>"; };
-		10000000000000000000023B /* ProxyAppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy/ProxyAppIntents.swift; sourceTree = "<group>"; };
-		10000000000000000000023C /* ProxyActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy/ProxyActivityAttributes.swift; sourceTree = "<group>"; };
-		10000000000000000000023D /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy/ActivityManager.swift; sourceTree = "<group>"; };
 		10000000000000000000023E /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		10000000000000000000023F /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/DeepLinkRouter.swift; sourceTree = "<group>"; };
 		100000000000000000000240 /* BackgroundKeeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy/BackgroundKeeper.swift; sourceTree = "<group>"; };
-		100000000000000000000233 /* TgWsProxy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TgWsProxy.entitlements; sourceTree = "<group>"; };
 		200000000000000000000200 /* PacketTunnel.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PacketTunnel.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		200000000000000000000201 /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
 		200000000000000000000202 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		200000000000000000000203 /* PacketTunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PacketTunnel.entitlements; sourceTree = "<group>"; };
-		300000000000000000000200 /* StatusWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StatusWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		300000000000000000000201 /* StatusWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusWidgetsBundle.swift; sourceTree = "<group>"; };
-		300000000000000000000202 /* ProxyStatusWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyStatusWidget.swift; sourceTree = "<group>"; };
-		300000000000000000000203 /* ProxyLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyLiveActivity.swift; sourceTree = "<group>"; };
-		300000000000000000000204 /* ProxyControlWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyControlWidget.swift; sourceTree = "<group>"; };
-		300000000000000000000205 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		300000000000000000000206 /* StatusWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatusWidgets.entitlements; sourceTree = "<group>"; };
 		100000000000000000000209 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		10000000000000000000020A /* TgWsProxy-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TgWsProxy-Bridging-Header.h"; sourceTree = "<group>"; };
 		10000000000000000000020B /* Cargo.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cargo.toml; sourceTree = "<group>"; };
@@ -114,13 +93,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		300000000000000000000302 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -129,7 +101,6 @@
 			children = (
 				100000000000000000000402 /* TgWsProxy */,
 				200000000000000000000401 /* PacketTunnel */,
-				300000000000000000000401 /* StatusWidgets */,
 				100000000000000000000404 /* src-wrapper */,
 				100000000000000000000406 /* scripts */,
 				100000000000000000000407 /* tests */,
@@ -152,11 +123,7 @@
 				100000000000000000000238 /* LogStore.swift */,
 				100000000000000000000239 /* LogsView.swift */,
 				10000000000000000000023A /* NotificationManager.swift */,
-				10000000000000000000023B /* ProxyAppIntents.swift */,
-				10000000000000000000023C /* ProxyActivityAttributes.swift */,
-				10000000000000000000023D /* ActivityManager.swift */,
 				10000000000000000000023E /* Localizable.xcstrings */,
-				10000000000000000000023F /* DeepLinkRouter.swift */,
 				100000000000000000000240 /* BackgroundKeeper.swift */,
 				100000000000000000000205 /* GlassTheme.swift */,
 				100000000000000000000204 /* ProxyViewModel.swift */,
@@ -166,7 +133,6 @@
 				100000000000000000000203 /* ProxyConfiguration.swift */,
 				100000000000000000000202 /* NativeProxy.swift */,
 				10000000000000000000020A /* TgWsProxy-Bridging-Header.h */,
-				100000000000000000000233 /* TgWsProxy.entitlements */,
 				100000000000000000000208 /* Assets.xcassets */,
 				100000000000000000000209 /* Info.plist */,
 			);
@@ -178,7 +144,6 @@
 			children = (
 				100000000000000000000200 /* TgWsProxy.app */,
 				200000000000000000000200 /* PacketTunnel.appex */,
-				300000000000000000000200 /* StatusWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -191,19 +156,6 @@
 				200000000000000000000203 /* PacketTunnel.entitlements */,
 			);
 			path = ios/PacketTunnel;
-			sourceTree = "<group>";
-		};
-		300000000000000000000401 /* StatusWidgets */ = {
-			isa = PBXGroup;
-			children = (
-				300000000000000000000201 /* StatusWidgetsBundle.swift */,
-				300000000000000000000202 /* ProxyStatusWidget.swift */,
-				300000000000000000000203 /* ProxyLiveActivity.swift */,
-				300000000000000000000204 /* ProxyControlWidget.swift */,
-				300000000000000000000205 /* Info.plist */,
-				300000000000000000000206 /* StatusWidgets.entitlements */,
-			);
-			path = ios/StatusWidgets;
 			sourceTree = "<group>";
 		};
 		100000000000000000000404 /* src-wrapper */ = {
@@ -291,24 +243,6 @@
 			productReference = 200000000000000000000200 /* PacketTunnel.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		300000000000000000000501 /* StatusWidgets */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 300000000000000000000801 /* Build configuration list for PBXNativeTarget "StatusWidgets" */;
-			buildPhases = (
-				300000000000000000000301 /* Sources */,
-				300000000000000000000302 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = StatusWidgets;
-			packageProductDependencies = (
-			);
-			productName = StatusWidgets;
-			productReference = 300000000000000000000200 /* StatusWidgets.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -324,9 +258,6 @@
 					};
 					200000000000000000000501 = {
 						CreatedOnToolsVersion = 16.0;
-					};
-					300000000000000000000501 = {
-						CreatedOnToolsVersion = 26.0;
 					};
 				};
 			};
@@ -347,7 +278,6 @@
 			targets = (
 				100000000000000000000501 /* TgWsProxy */,
 				200000000000000000000501 /* PacketTunnel */,
-				300000000000000000000501 /* StatusWidgets */,
 			);
 		};
 /* End PBXProject section */
@@ -433,11 +363,7 @@
 				100000000000000000000137 /* LogStore.swift in Sources */,
 				100000000000000000000138 /* LogsView.swift in Sources */,
 				100000000000000000000139 /* NotificationManager.swift in Sources */,
-				10000000000000000000013A /* ProxyAppIntents.swift in Sources */,
-				10000000000000000000013B /* ProxyActivityAttributes.swift in Sources */,
-				10000000000000000000013C /* ActivityManager.swift in Sources */,
 				10000000000000000000013F /* BackgroundKeeper.swift in Sources */,
-				10000000000000000000013E /* DeepLinkRouter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,18 +374,6 @@
 				200000000000000000000101 /* PacketTunnelProvider.swift in Sources */,
 				200000000000000000000102 /* NativeProxy.swift in Sources */,
 				200000000000000000000103 /* ProxyConfiguration.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		300000000000000000000301 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				300000000000000000000101 /* StatusWidgetsBundle.swift in Sources */,
-				300000000000000000000102 /* ProxyStatusWidget.swift in Sources */,
-				300000000000000000000103 /* ProxyLiveActivity.swift in Sources */,
-				300000000000000000000104 /* ProxyControlWidget.swift in Sources */,
-				300000000000000000000105 /* ProxyActivityAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,62 +665,6 @@
 			};
 			name = Release;
 		};
-		300000000000000000000701 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = ios/StatusWidgets/StatusWidgets.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8Y5QD6A49C;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ios/StatusWidgets/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.delewer.tgwsproxy.sideload.widgets;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		300000000000000000000702 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = ios/StatusWidgets/StatusWidgets.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8Y5QD6A49C;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ios/StatusWidgets/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.delewer.tgwsproxy.sideload.widgets;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -833,15 +691,6 @@
 			buildConfigurations = (
 				200000000000000000000701 /* Debug */,
 				200000000000000000000702 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		300000000000000000000801 /* Build configuration list for PBXNativeTarget "StatusWidgets" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				300000000000000000000701 /* Debug */,
-				300000000000000000000702 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

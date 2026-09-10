@@ -140,7 +140,6 @@ final class ProxyViewModel: ObservableObject {
         stats = .empty
         traffic = []
         lastSample = nil
-        ActivityManager.stopped()
         if notify, wasRunning {
             NotificationManager.post(title: "TG WS Proxy", body: "Прокси остановлен")
         }
@@ -213,7 +212,6 @@ final class ProxyViewModel: ObservableObject {
         traffic = []
         Haptics.notify(.success)
         NotificationManager.post(title: "TG WS Proxy", body: "Прокси запущен")
-        ActivityManager.started(mode: modeTitle)
         statsTask?.cancel()
         statsTask = Task { [weak self] in
             while !Task.isCancelled {
@@ -221,7 +219,6 @@ final class ProxyViewModel: ObservableObject {
                 let s = await self.engine.stats()
                 self.stats = s
                 self.recordTraffic(s)
-                ActivityManager.update(stats: s)
                 try? await Task.sleep(for: .seconds(1))
             }
         }

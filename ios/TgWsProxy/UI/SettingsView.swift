@@ -173,7 +173,6 @@ struct SettingsView: View {
                 Toggle("Авто-переподключение".tgLoc, isOn: $settings.reconnect)
                 Toggle("Уведомления".tgLoc, isOn: $settings.notifications)
                 Toggle("Вибрация".tgLoc, isOn: $settings.haptics)
-                Toggle("Live Activity / Dynamic Island".tgLoc, isOn: $settings.liveActivities)
                 Toggle("Удерживать прокси в фоне".tgLoc, isOn: $settings.backgroundKeeper)
                 Text("Локальный режим не переживает сворачивание приложения. Приложение подписывается на обновления геопозиции, чтобы iOS не приостанавливала процесс. Нужен доступ к геопозиции в режиме «Всегда».".tgLoc)
                     .font(.caption)
@@ -226,9 +225,6 @@ struct SettingsView: View {
         .scrollContentBackground(.hidden)
         .onChange(of: settings.notifications) { _, on in
             if on { NotificationManager.requestAuthorization() }
-        }
-        .onChange(of: settings.liveActivities) { _, enabled in
-            ActivityManager.setEnabled(enabled, mode: proxy.modeTitle, running: proxy.isRunning)
         }
         .onChange(of: settings.backgroundKeeper) { _, enabled in
             if enabled {
