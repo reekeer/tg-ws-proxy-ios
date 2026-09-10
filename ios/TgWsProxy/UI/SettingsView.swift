@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
     @EnvironmentObject private var proxy: ProxyViewModel
@@ -173,6 +174,17 @@ struct SettingsView: View {
                 Toggle("Уведомления".tgLoc, isOn: $settings.notifications)
                 Toggle("Вибрация".tgLoc, isOn: $settings.haptics)
                 Toggle("Live Activity / Dynamic Island".tgLoc, isOn: $settings.liveActivities)
+                Toggle("Удерживать прокси в фоне".tgLoc, isOn: $settings.backgroundKeeper)
+                Text("Локальный режим не переживает сворачивание приложения. Приложение подписывается на обновления геопозиции, чтобы iOS не приостанавливала процесс. Нужен доступ к геопозиции в режиме «Всегда».".tgLoc)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                if settings.backgroundKeeper, !BackgroundKeeper.shared.isAuthorizedForBackground {
+                    Button {
+                        openLocationSettings()
+                    } label: {
+                        Label("Открыть настройки геопозиции".tgLoc, systemImage: "location.circle")
+                    }
+                }
             }
 
             if settings.restartRequired {
@@ -218,8 +230,21 @@ struct SettingsView: View {
         .onChange(of: settings.liveActivities) { _, enabled in
             ActivityManager.setEnabled(enabled, mode: proxy.modeTitle, running: proxy.isRunning)
         }
+        .onChange(of: settings.backgroundKeeper) { _, enabled in
+            if enabled {
+                BackgroundKeeper.shared.requestAuthorization()
+                if proxy.isRunning { BackgroundKeeper.shared.activate() }
+            } else {
+                BackgroundKeeper.shared.deactivate()
+            }
+        }
         .sheet(isPresented: $showLogs) { LogsView() }
         .sheet(isPresented: $showPing) { PingView() }
+    }
+
+    private func openLocationSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 
     private var languageBinding: Binding<AppLanguage> {

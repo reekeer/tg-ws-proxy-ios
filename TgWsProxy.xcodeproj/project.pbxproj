@@ -30,6 +30,7 @@
 		10000000000000000000013C /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023D /* ActivityManager.swift */; };
 		10000000000000000000013D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023E /* Localizable.xcstrings */; };
 		10000000000000000000013E /* DeepLinkRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000023F /* DeepLinkRouter.swift */; };
+		10000000000000000000013F /* BackgroundKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000240 /* BackgroundKeeper.swift */; };
 		200000000000000000000101 /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200000000000000000000201 /* PacketTunnelProvider.swift */; };
 		200000000000000000000102 /* NativeProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000202 /* NativeProxy.swift */; };
 		200000000000000000000103 /* ProxyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000203 /* ProxyConfiguration.swift */; };
@@ -65,6 +66,7 @@
 		10000000000000000000023D /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy/ActivityManager.swift; sourceTree = "<group>"; };
 		10000000000000000000023E /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		10000000000000000000023F /* DeepLinkRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/DeepLinkRouter.swift; sourceTree = "<group>"; };
+		100000000000000000000240 /* BackgroundKeeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy/BackgroundKeeper.swift; sourceTree = "<group>"; };
 		100000000000000000000233 /* TgWsProxy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TgWsProxy.entitlements; sourceTree = "<group>"; };
 		200000000000000000000200 /* PacketTunnel.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PacketTunnel.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		200000000000000000000201 /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				10000000000000000000023D /* ActivityManager.swift */,
 				10000000000000000000023E /* Localizable.xcstrings */,
 				10000000000000000000023F /* DeepLinkRouter.swift */,
+				100000000000000000000240 /* BackgroundKeeper.swift */,
 				100000000000000000000205 /* GlassTheme.swift */,
 				100000000000000000000204 /* ProxyViewModel.swift */,
 				100000000000000000000230 /* ProxyEngine.swift */,
@@ -433,6 +436,7 @@
 				10000000000000000000013A /* ProxyAppIntents.swift in Sources */,
 				10000000000000000000013B /* ProxyActivityAttributes.swift in Sources */,
 				10000000000000000000013C /* ActivityManager.swift in Sources */,
+				10000000000000000000013F /* BackgroundKeeper.swift in Sources */,
 				10000000000000000000013E /* DeepLinkRouter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

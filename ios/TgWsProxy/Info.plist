@@ -31,6 +31,14 @@
     </array>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>location</string>
+    </array>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Геопозиция нужна только для того, чтобы iOS не приостанавливала прокси в фоне. Координаты никуда не передаются.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Разрешение «Всегда» нужно, чтобы прокси продолжал работать после сворачивания приложения. Координаты никуда не передаются.</string>
     <key>NSSupportsLiveActivities</key>
     <true/>
     <key>LSApplicationQueriesSchemes</key>

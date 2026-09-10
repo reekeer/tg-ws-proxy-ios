@@ -90,7 +90,13 @@ final class ProxyViewModel: ObservableObject {
         if engine.runsInBackground {
             return "Системный VPN-туннель удерживает прокси активным в фоне.".tgLoc
         }
-        return "Локальный прокси работает, пока приложение открыто. Для постоянной работы в фоне нужен системный VPN-туннель (Network Extension), который доступен не во всех способах установки.".tgLoc
+        if BackgroundKeeper.isEnabled {
+            if BackgroundKeeper.shared.isAuthorizedForBackground {
+                return "Прокси удерживается в фоне через геопозицию.".tgLoc
+            }
+            return "Чтобы прокси не засыпал, разрешите доступ к геопозиции в режиме «Всегда» в настройках iOS.".tgLoc
+        }
+        return "Локальный прокси работает, пока приложение открыто. Включите удержание фона в настройках или используйте сборку с VPN-туннелем.".tgLoc
     }
 
     func toggle() {
@@ -130,6 +136,7 @@ final class ProxyViewModel: ObservableObject {
         startAttempt = 0
         state = .stopped
         await engine.stop()
+        BackgroundKeeper.shared.deactivate()
         stats = .empty
         traffic = []
         lastSample = nil
@@ -199,6 +206,9 @@ final class ProxyViewModel: ObservableObject {
 
     private func didStart() {
         state = .running
+        if !engine.runsInBackground {
+            BackgroundKeeper.shared.activate()
+        }
         lastSample = nil
         traffic = []
         Haptics.notify(.success)

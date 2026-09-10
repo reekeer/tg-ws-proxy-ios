@@ -1400,6 +1400,66 @@
           }
         }
       }
+    },
+    "Локальный прокси работает, пока приложение открыто. Включите удержание фона в настройках или используйте сборку с VPN-туннелем." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The local proxy runs while the app is open. Enable background hold in settings or use a build with the VPN tunnel."
+          }
+        }
+      }
+    },
+    "Локальный режим не переживает сворачивание приложения. Приложение подписывается на обновления геопозиции, чтобы iOS не приостанавливала процесс. Нужен доступ к геопозиции в режиме «Всегда»." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local mode does not survive backgrounding. The app subscribes to location updates so iOS does not suspend the process. Location access must be set to “Always”."
+          }
+        }
+      }
+    },
+    "Открыть настройки геопозиции" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open location settings"
+          }
+        }
+      }
+    },
+    "Прокси удерживается в фоне через геопозицию." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location updates keep the proxy alive in the background."
+          }
+        }
+      }
+    },
+    "Удерживать прокси в фоне" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep the proxy alive in the background"
+          }
+        }
+      }
+    },
+    "Чтобы прокси не засыпал, разрешите доступ к геопозиции в режиме «Всегда» в настройках iOS." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set location access to “Always” in iOS settings so the proxy does not go to sleep."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
