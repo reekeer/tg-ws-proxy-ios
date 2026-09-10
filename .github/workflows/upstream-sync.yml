@@ -9,46 +9,35 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
 
-      - name: Sync, Patch and Prepare Rust Core
-        run: |
-          # 1. Очищаем старые папки, чтобы исключить конфликты
-          rm -rf vendor/tg-ws-proxy-android
-          rm -rf tg-ws-proxy-android
-          mkdir -p vendor
-          
-          # 2. Клонируем в дефолтную папку и принудительно переносим её по нужному пути
-          git clone --depth=1 https://github.com/amurcanov/tg-ws-proxy-android
-          mv tg-ws-proxy-android vendor/tg-ws-proxy-android
-          
-          # 3. Накатываем патч совместимости с iOS (используем -p0, так как мы внутри целевой папки)
-          cd vendor/tg-ws-proxy-android
-          patch -p0 < ../../scripts/patches/ios-ffi.patch
-          cd ../..
-          
-          # 4. Синхронизируем рабочую директорию src-wrapper для cargo check
-          rm -rf src-wrapper/src
-          mkdir -p src-wrapper/src
-          cp -R vendor/tg-ws-proxy-android/src/* src-wrapper/src/
-          cp vendor/tg-ws-proxy-android/Cargo.toml src-wrapper/Cargo.toml
-          cp vendor/tg-ws-proxy-android/Cargo.lock src-wrapper/Cargo.lock
-          
-          # 5. Записываем хэш коммита для истории
-          cd vendor/tg-ws-proxy-android
-          git rev-parse HEAD > ../../src-wrapper/UPSTREAM_COMMIT
-          cd ../..
+      - name: Sync Rust core from upstream
+        run: ./scripts/sync-rust-upstream.sh
 
-      - name: Check Rust core
+      - name: Check Rust core for the host
         run: cargo check --manifest-path src-wrapper/Cargo.toml --locked
+
+      - name: Check Rust core for iOS
+        run: cargo check --manifest-path src-wrapper/Cargo.toml --locked --target aarch64-apple-ios
+
+      - name: FFI smoke test
+        run: ./scripts/run-ffi-smoke.sh
 
       - name: Create update pull request
         uses: peter-evans/create-pull-request@v7
@@ -56,9 +45,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: automation/rust-upstream
           delete-branch: true
+          add-paths: |
+            src-wrapper
+            vendor/tg-ws-proxy-android
           commit-message: "chore: sync Rust upstream"
           title: "chore: sync Rust upstream"
           body: |
-            Автоматическая еженедельная синхронизация Rust-ядра из апстрима `amurcanov/tg-ws-proxy-android`.
+            Автоматическая еженедельная синхронизация Rust-ядра из `amurcanov/tg-ws-proxy-android`.
 
-            Все файлы ядра успешно синхронизированы в src-wrapper, патч iOS FFI наложен, и компиляция проверена.
+            Патч `scripts/patches/ios-ffi.patch` наложен заново, ядро проверено для хоста
+            и для `aarch64-apple-ios`, FFI-контракт прогнан смоук-тестом.
