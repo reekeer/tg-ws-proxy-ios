@@ -44,10 +44,10 @@ jobs:
           # Без entitlements: ставится с любым Apple ID, в фоне держится
           # через CoreLocation.
           - name: free
-            components: none
+            flags: ""
           # С Network Extension: нужен profile с packet-tunnel-provider.
           - name: vpn
-            components: vpn
+            flags: "--vpn"
     steps:
       - uses: actions/checkout@v4
 
@@ -56,7 +56,7 @@ jobs:
           targets: aarch64-apple-ios
 
       - name: Build IPA
-        run: ./build.sh -p side -c ${{ matrix.components }}
+        run: ./build.sh ${{ matrix.flags }}
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4

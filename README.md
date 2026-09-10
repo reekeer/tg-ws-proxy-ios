@@ -60,8 +60,8 @@ Telegram → 127.0.0.1:1443 → Rust-ядро → WSS / Cloudflare → Telegram 
 
 | Режим | Где живёт ядро | Когда используется |
 |-------|----------------|--------------------|
-| Локальный | внутри процесса приложения | сборка без компонента `vpn`, а также fallback, если туннель не поднялся |
-| VPN-туннель | в системном процессе `PacketTunnelProvider` | сборка с компонентом `vpn` и подписанным entitlement Network Extension |
+| Локальный | внутри процесса приложения | сборка без `--vpn`, а также fallback, если туннель не поднялся |
+| VPN-туннель | в системном процессе `PacketTunnelProvider` | сборка с `--vpn` и подписанным entitlement Network Extension |
 
 Туннель не маршрутизирует трафик устройства: `includedRoutes` пустой, весь трафик исключён. Он нужен только для того, чтобы iOS держала процесс с ядром живым, а loopback-интерфейс доступен всем процессам на устройстве.
 
@@ -95,16 +95,13 @@ iOS не даёт обычному приложению держать TCP-се�
 Локальная сборка (нужны Xcode и Rust с таргетом `aarch64-apple-ios`):
 
 ```sh
-./build.sh -p side -c none   # TgWsProxy-free.ipa
-./build.sh -p side -c vpn    # TgWsProxy-vpn.ipa
-./build.sh -p sim --install  # симулятор
-./build.sh -h                # платформы и компоненты
+./build.sh                # TgWsProxy-free.ipa
+./build.sh --vpn          # TgWsProxy-vpn.ipa
+./build.sh --sim --install  # симулятор
+./build.sh -h             # все флаги
 ```
 
-Платформы: `sim`, `lc` (LiveContainer), `side` (Sideloadly / iLoader / TrollStore), `alt` (AltStore / SideStore).
-Компоненты: `vpn` — Network Extension, `none` — только приложение.
-
-LiveContainer не умеет загружать вложенные расширения, поэтому для платформы `lc` компонент `vpn` отключается автоматически.
+IPA один и тот же для Sideloadly, AltStore, SideStore, iLoader и TrollStore — способ установки на сборку не влияет. Для LiveContainer берите вариант без `--vpn`: вложенные расширения он загружать не умеет.
 
 Подробный разбор поведения в каждом способе установки — в [docs/ARCHITECTURE.ru.md](docs/ARCHITECTURE.ru.md).
 

@@ -4,8 +4,8 @@ set -eu
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 
-PLATFORM=""
-COMPONENTS=""
+SIMULATOR=0
+WITH_VPN=0
 INSTALL=0
 CONFIGURATION="Release"
 OUTPUT_DIR="$ROOT/dist"
@@ -15,42 +15,34 @@ usage() {
 TG WS Proxy build tool
 
 Usage:
-  ./build.sh -p <platform> [-c <components>] [--install] [--debug]
-
-Platforms:
-  sim          iOS Simulator; components default to vpn
-  lc           LiveContainer; app-only, extensions are not supported
-  side         Sideload / Sideloadly / iLoader / TrollStore
-  alt          AltStore / SideStore
-
-Components:
-  vpn          Packet Tunnel / Network Extension
-  none         app-only; the proxy is held in the background by CoreLocation
+  ./build.sh [--vpn] [--sim [--install]] [--debug]
 
 Options:
-  -p, --platform       sim | lc | side | alt
-  -c, --components     vpn | none
-      --install        install and launch on the currently booted simulator
-      --debug          Debug build (default: Release)
-  -h, --help           show this help
+      --vpn      bundle the Packet Tunnel / Network Extension
+      --sim      build for the iOS Simulator instead of a device
+      --install  install and launch on the currently booted simulator
+      --debug    Debug build (default: Release)
+  -h, --help     show this help
 
-Notes:
-  - LiveContainer cannot load app extensions; vpn is disabled for lc.
-  - On a free Apple ID the Network Extension entitlement usually fails to
-    sign; build with -c none for that case.
+Output:
+  dist/TgWsProxy-free.ipa   default; installs with any Apple ID, the proxy
+                            is held in the background by CoreLocation
+  dist/TgWsProxy-vpn.ipa    --vpn; needs a provisioning profile with
+                            packet-tunnel-provider
+
+Note:
+  LiveContainer cannot load app extensions, so use the default build there.
 EOF
 }
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    -p|--platform)
-      [ "$#" -ge 2 ] || { echo "Missing value for $1" >&2; exit 2; }
-      PLATFORM="$2"; shift 2 ;;
-    -c|--components)
-      [ "$#" -ge 2 ] || { echo "Missing value for $1" >&2; exit 2; }
-      COMPONENTS="$2"; shift 2 ;;
+    --vpn)
+      WITH_VPN=1; shift ;;
+    --sim)
+      SIMULATOR=1; shift ;;
     --install)
-      INSTALL=1; shift ;;
+      INSTALL=1; SIMULATOR=1; shift ;;
     --debug)
       CONFIGURATION="Debug"; shift ;;
     -h|--help)
@@ -61,8 +53,6 @@ while [ "$#" -gt 0 ]; do
       exit 2 ;;
   esac
 done
-
-[ -n "$PLATFORM" ] || { usage; exit 2; }
 
 : "${DEVELOPER_DIR:=$(xcode-select -p)}"
 if [ -z "$DEVELOPER_DIR" ] || [ "$DEVELOPER_DIR" = "/Library/Developer/CommandLineTools" ]; then
@@ -82,61 +72,22 @@ fi
 
 export PATH="$HOME/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:$DEVELOPER_DIR/usr/bin:$PATH"
 
-if [ "$PLATFORM" = "sim" ] && [ -z "$COMPONENTS" ]; then
-  COMPONENTS="vpn"
-elif [ -z "$COMPONENTS" ]; then
-  COMPONENTS="none"
+BUNDLE_ID="com.delewer.tgwsproxy"
+
+if [ "$SIMULATOR" -eq 1 ]; then
+  SDK="iphonesimulator"
+  DESTINATION="generic/platform=iOS Simulator"
+  NAME="sim"
+else
+  SDK="iphoneos"
+  DESTINATION="generic/platform=iOS"
+  NAME="ios"
 fi
 
-case "$COMPONENTS" in
-  vpn) WITH_VPN=1 ;;
-  none) WITH_VPN=0 ;;
-  *)
-    echo "Unknown component: $COMPONENTS" >&2
-    usage
-    exit 2
-    ;;
-esac
-
-case "$PLATFORM" in
-  sim)
-    SDK="iphonesimulator"
-    DESTINATION="generic/platform=iOS Simulator"
-    BUNDLE_ID="com.delewer.tgwsproxy.sim"
-    ;;
-  lc)
-    SDK="iphoneos"
-    DESTINATION="generic/platform=iOS"
-    BUNDLE_ID="com.delewer.tgwsproxy.lc"
-    if [ "$WITH_VPN" -eq 1 ]; then
-      echo "warning: LiveContainer cannot load extensions; disabling vpn." >&2
-      WITH_VPN=0
-      COMPONENTS="none"
-    fi
-    ;;
-  side)
-    SDK="iphoneos"
-    DESTINATION="generic/platform=iOS"
-    BUNDLE_ID="com.delewer.tgwsproxy.sideload"
-    ;;
-  alt)
-    SDK="iphoneos"
-    DESTINATION="generic/platform=iOS"
-    BUNDLE_ID="com.delewer.tgwsproxy.altstore"
-    ;;
-  *)
-    echo "Unknown platform: $PLATFORM" >&2
-    usage
-    exit 2
-    ;;
-esac
-
-if [ "$INSTALL" -eq 1 ] && [ "$PLATFORM" != "sim" ]; then
-  echo "--install is supported only for --platform sim" >&2
-  exit 2
+if [ "$WITH_VPN" -eq 1 ]; then
+  NAME="$NAME-vpn"
 fi
 
-NAME="${PLATFORM}-${COMPONENTS}"
 DD="$ROOT/.build/dynamic/$NAME"
 PRODUCTS="$DD/Build/Products/${CONFIGURATION}-${SDK}"
 APP="$PRODUCTS/TgWsProxy.app"
@@ -149,8 +100,8 @@ if [ "$WITH_VPN" -eq 1 ]; then
 fi
 
 echo "TG WS Proxy iOS dynamic build"
-echo "  platform:   $PLATFORM ($SDK)"
-echo "  components: $COMPONENTS"
+echo "  target:     $SDK"
+echo "  tunnel:     $([ "$WITH_VPN" -eq 1 ] && echo yes || echo no)"
 echo "  config:     $CONFIGURATION"
 echo "  bundle id:  $BUNDLE_ID"
 echo "  output:     $DD"
@@ -201,7 +152,7 @@ if [ "$WITH_VPN" -eq 1 ]; then
   cp -R "$PRODUCTS/PacketTunnel.appex" "$APP/PlugIns/"
 fi
 
-if [ "$PLATFORM" = "sim" ]; then
+if [ "$SIMULATOR" -eq 1 ]; then
   echo "Built simulator app: $APP"
   if [ "$INSTALL" -eq 1 ]; then
     UDID="$(xcrun simctl list devices booted -j | /usr/bin/python3 -c '

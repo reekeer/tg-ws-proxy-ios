@@ -608,7 +608,7 @@
 					"-lresolv",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.delewer.tgwsproxy.sideload.tunnel;
+				PRODUCT_BUNDLE_IDENTIFIER = com.delewer.tgwsproxy.tunnel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -653,7 +653,7 @@
 					"-lresolv",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.delewer.tgwsproxy.sideload.tunnel;
+				PRODUCT_BUNDLE_IDENTIFIER = com.delewer.tgwsproxy.tunnel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

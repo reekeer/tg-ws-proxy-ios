@@ -60,8 +60,8 @@ The proxy is added to Telegram through a `tg://proxy?server=127.0.0.1&port=1443&
 
 | Mode | Where the core lives | When it is used |
 |------|----------------------|-----------------|
-| Local | inside the app process | builds without the `vpn` component, and as a fallback when the tunnel fails to start |
-| VPN tunnel | in the system `PacketTunnelProvider` process | builds with the `vpn` component and a signed Network Extension entitlement |
+| Local | inside the app process | builds without `--vpn`, and as a fallback when the tunnel fails to start |
+| VPN tunnel | in the system `PacketTunnelProvider` process | builds with `--vpn` and a signed Network Extension entitlement |
 
 The tunnel does not route device traffic: `includedRoutes` is empty and everything is excluded. It exists only so iOS keeps the process holding the core alive, and the loopback interface is shared by every process on the device.
 
@@ -95,16 +95,13 @@ Both are attached to every release, together with a rundown of which one to pick
 Local builds (Xcode plus Rust with the `aarch64-apple-ios` target):
 
 ```sh
-./build.sh -p side -c none   # TgWsProxy-free.ipa
-./build.sh -p side -c vpn    # TgWsProxy-vpn.ipa
-./build.sh -p sim --install  # simulator
-./build.sh -h                # platforms and components
+./build.sh                # TgWsProxy-free.ipa
+./build.sh --vpn          # TgWsProxy-vpn.ipa
+./build.sh --sim --install  # simulator
+./build.sh -h             # every flag
 ```
 
-Platforms: `sim`, `lc` (LiveContainer), `side` (Sideloadly / iLoader / TrollStore), `alt` (AltStore / SideStore).
-Components: `vpn` — Network Extension, `none` — app only.
-
-LiveContainer cannot load embedded extensions, so the `vpn` component is disabled automatically for the `lc` platform.
+The same IPA works with Sideloadly, AltStore, SideStore, iLoader and TrollStore — the installation method does not change the build. For LiveContainer take the build without `--vpn`: it cannot load embedded extensions.
 
 A detailed walkthrough of every installation method lives in [ARCHITECTURE.ru.md](ARCHITECTURE.ru.md).
 

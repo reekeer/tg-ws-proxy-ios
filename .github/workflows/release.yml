@@ -28,8 +28,8 @@ jobs:
 
       - name: Build both IPAs
         run: |
-          ./build.sh -p side -c none
-          ./build.sh -p side -c vpn
+          ./build.sh
+          ./build.sh --vpn
 
       - name: Publish release
         env:
