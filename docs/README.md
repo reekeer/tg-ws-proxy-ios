@@ -62,12 +62,13 @@ From the [releases page](https://github.com/reekeer/tg-ws-proxy-ios/releases/lat
 </details>
 
 <details>
-<summary><b>iLoader</b> — straight from the iPhone, no computer</summary>
+<summary><b>iLoader</b> — computer and a cable, an alternative to Sideloadly</summary>
 
-1. Open iLoader and sign in with your Apple ID.
-2. Add the downloaded `.ipa` and start the installation.
+1. Install iLoader on the computer.
+2. Connect the iPhone by cable and trust the computer.
+3. Point it at the downloaded `.ipa`, sign in with your Apple ID and start the installation.
 
-The interface changes noticeably between versions, so follow the prompts inside the app. The limits are the same as with Sideloadly: free account, 7 days, three apps.
+The interface changes noticeably between versions, so follow the prompts inside the program. The limits are the same as with Sideloadly: free account, 7 days, three apps.
 
 </details>
 
