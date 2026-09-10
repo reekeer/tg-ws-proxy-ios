@@ -1,4 +1,6 @@
 import Foundation
+import Network
+import os
 import SwiftUI
 
 @MainActor
@@ -86,17 +88,10 @@ final class ProxyViewModel: ObservableObject {
         """
     }
 
-    var backgroundNote: String {
-        if engine.runsInBackground {
-            return "Фон: системный VPN-туннель.".tgLoc
-        }
-        if BackgroundKeeper.isEnabled {
-            if BackgroundKeeper.shared.isAuthorizedForBackground {
-                return "Фон: геопозиция.".tgLoc
-            }
-            return "Фон: нужен доступ к геопозиции в режиме «Всегда».".tgLoc
-        }
-        return "Фон выключен: прокси работает, пока приложение открыто.".tgLoc
+    var backgroundWarning: String? {
+        guard !engine.runsInBackground else { return nil }
+        guard !BackgroundKeeper.shared.isAuthorizedForBackground else { return nil }
+        return "Без доступа к геопозиции в режиме «Всегда» прокси остановится, как только вы свернёте приложение.".tgLoc
     }
 
     func toggle() {
@@ -214,13 +209,48 @@ final class ProxyViewModel: ObservableObject {
         NotificationManager.post(title: "TG WS Proxy", body: "Прокси запущен")
         statsTask?.cancel()
         statsTask = Task { [weak self] in
+            var tick = 0
             while !Task.isCancelled {
                 guard let self else { return }
                 let s = await self.engine.stats()
                 self.stats = s
                 self.recordTraffic(s)
+
+                tick += 1
+                if tick % 5 == 0, self.isRunning, !(await self.isListening()) {
+                    self.didFail("Прокси перестал отвечать".tgLoc)
+                    return
+                }
                 try? await Task.sleep(for: .seconds(1))
             }
+        }
+    }
+
+    private func isListening() async -> Bool {
+        let host = configuration.bindAddress
+        guard let port = NWEndpoint.Port(rawValue: UInt16(configuration.port)) else { return false }
+        return await withCheckedContinuation { continuation in
+            let connection = NWConnection(host: NWEndpoint.Host(host), port: port, using: .tcp)
+            let finished = OSAllocatedUnfairLock(initialState: false)
+            func finish(_ alive: Bool) {
+                let first = finished.withLock { done -> Bool in
+                    guard !done else { return false }
+                    done = true
+                    return true
+                }
+                guard first else { return }
+                connection.cancel()
+                continuation.resume(returning: alive)
+            }
+            connection.stateUpdateHandler = { state in
+                switch state {
+                case .ready: finish(true)
+                case .failed, .cancelled: finish(false)
+                default: break
+                }
+            }
+            connection.start(queue: .global())
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2) { finish(false) }
         }
     }
 
