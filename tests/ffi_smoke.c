@@ -17,7 +17,10 @@ void FreeString(char *pointer);
 
 int main(void) {
     const char *secret = "0123456789abcdef0123456789abcdef";
-    int32_t started = StartProxy("127.0.0.1", 1443, "", secret, 0);
+    /* Не 1443: на машине разработчика этот порт уже держит само приложение. */
+    const char *port_env = getenv("TGWS_SMOKE_PORT");
+    int32_t port = port_env != NULL ? (int32_t)strtol(port_env, NULL, 10) : 34443;
+    int32_t started = StartProxy("127.0.0.1", port, "", secret, 0);
     if (started != 0) {
         fprintf(stderr, "StartProxy returned %d\n", started);
     }
