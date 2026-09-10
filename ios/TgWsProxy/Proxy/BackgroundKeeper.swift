@@ -71,6 +71,9 @@ extension BackgroundKeeper: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        // locationUnknown приходит, пока система не получила первую координату,
+        // и менеджер продолжает попытки сам — в логах это только шум.
+        if (error as? CLError)?.code == .locationUnknown { return }
         fputs("BackgroundKeeper: \(error.localizedDescription)\n", stderr)
     }
 }
