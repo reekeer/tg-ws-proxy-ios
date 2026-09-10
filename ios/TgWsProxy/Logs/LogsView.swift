@@ -13,12 +13,8 @@ struct LogsTabView: View {
                     .foregroundStyle(.secondary)
                 Spacer()
                 ShareLink(item: store.report(context: proxy.diagnosticsContext)) {
-                    Image(systemName: "doc.badge.arrow.up")
-                }
-                ShareLink(item: store.joined()) {
                     Image(systemName: "square.and.arrow.up")
                 }
-                .disabled(store.lines.isEmpty)
                 Button {
                     UIPasteboard.general.string = store.joined()
                     Haptics.impact(.light)

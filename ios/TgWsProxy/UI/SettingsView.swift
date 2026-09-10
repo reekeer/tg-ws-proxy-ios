@@ -1,11 +1,8 @@
 import SwiftUI
-import UIKit
 
 struct SettingsView: View {
     @EnvironmentObject private var proxy: ProxyViewModel
     @EnvironmentObject private var settings: AppSettings
-    @State private var showLogs = false
-    @State private var showPing = false
     @State private var secretCopied = false
     @State private var refreshingDomains = false
 
@@ -174,14 +171,6 @@ struct SettingsView: View {
                 Toggle("Авто-переподключение".tgLoc, isOn: $settings.reconnect)
                 Toggle("Уведомления".tgLoc, isOn: $settings.notifications)
                 Toggle("Вибрация".tgLoc, isOn: $settings.haptics)
-                Toggle("Удерживать прокси в фоне".tgLoc, isOn: $settings.backgroundKeeper)
-                if settings.backgroundKeeper, !BackgroundKeeper.shared.isAuthorizedForBackground {
-                    Button {
-                        openLocationSettings()
-                    } label: {
-                        Label("Геопозиция: нужен режим «Всегда»".tgLoc, systemImage: "location.circle")
-                    }
-                }
             }
 
             if settings.restartRequired {
@@ -194,16 +183,6 @@ struct SettingsView: View {
 
             Section("Диагностика".tgLoc) {
                 Toggle("Подробные логи Rust".tgLoc, isOn: $proxy.configuration.verboseLogging)
-                Button {
-                    showLogs = true
-                } label: {
-                    Label("Открыть логи отдельно".tgLoc, systemImage: "rectangle.on.rectangle")
-                }
-                Button {
-                    showPing = true
-                } label: {
-                    Label("Проверить задержку до DC".tgLoc, systemImage: "wave.3.right")
-                }
             }
 
         }
@@ -211,21 +190,6 @@ struct SettingsView: View {
         .onChange(of: settings.notifications) { _, on in
             if on { NotificationManager.requestAuthorization() }
         }
-        .onChange(of: settings.backgroundKeeper) { _, enabled in
-            if enabled {
-                BackgroundKeeper.shared.requestAuthorization()
-                if proxy.isRunning { BackgroundKeeper.shared.activate() }
-            } else {
-                BackgroundKeeper.shared.deactivate()
-            }
-        }
-        .sheet(isPresented: $showLogs) { LogsView() }
-        .sheet(isPresented: $showPing) { PingView() }
-    }
-
-    private func openLocationSettings() {
-        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-        UIApplication.shared.open(url)
     }
 
     private var languageBinding: Binding<AppLanguage> {

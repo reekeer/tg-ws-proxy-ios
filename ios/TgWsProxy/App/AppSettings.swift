@@ -138,9 +138,6 @@ final class AppSettings: ObservableObject {
     @Published var notifications: Bool { didSet { Self.save(notifications, "app.notifications") } }
     @Published var haptics: Bool { didSet { Self.save(haptics, "app.haptics") } }
     @Published var liquidGlass: Bool { didSet { Self.save(liquidGlass, "app.liquidGlass") } }
-    @Published var backgroundKeeper: Bool {
-        didSet { Self.save(backgroundKeeper, BackgroundKeeper.settingsKey) }
-    }
     @Published var onboardingDone: Bool { didSet { Self.save(onboardingDone, "app.onboardingDone") } }
     @Published var restartRequired = false
     @Published var restartToken = UUID()
@@ -155,7 +152,6 @@ final class AppSettings: ObservableObject {
         notifications = d.object(forKey: "app.notifications") as? Bool ?? false
         haptics = d.object(forKey: "app.haptics") as? Bool ?? true
         liquidGlass = d.object(forKey: "app.liquidGlass") as? Bool ?? true
-        backgroundKeeper = d.object(forKey: BackgroundKeeper.settingsKey) as? Bool ?? true
         onboardingDone = d.object(forKey: "app.onboardingDone") as? Bool ?? false
         LanguageSwitcher.apply(language)
     }
