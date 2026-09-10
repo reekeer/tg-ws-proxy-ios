@@ -33,6 +33,7 @@
       }
     },
     "%lld мс" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -223,6 +224,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Accent"
+          }
+        }
+      }
+    },
+    "Без доступа к геопозиции в режиме «Всегда» прокси остановится, как только вы свернёте приложение." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Without location access set to “Always” the proxy stops as soon as you leave the app."
           }
         }
       }
@@ -763,6 +775,17 @@
         }
       }
     },
+    "Прокси перестал отвечать" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The proxy stopped responding"
+          }
+        }
+      }
+    },
     "Прокси работает" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1033,26 +1056,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App language"
-          }
-        }
-      }
-    },
-    "Без доступа к геопозиции в режиме «Всегда» прокси остановится, как только вы свернёте приложение." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Without location access set to “Always” the proxy stops as soon as you leave the app."
-          }
-        }
-      }
-    },
-    "Прокси перестал отвечать" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The proxy stopped responding"
           }
         }
       }
