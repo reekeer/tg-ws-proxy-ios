@@ -24,7 +24,7 @@ struct InfoView: View {
 
     private var about: some View {
         VStack(spacing: 10) {
-            Image("TelegramIcon")
+            Image("AppLogo")
                 .resizable()
                 .scaledToFit()
             .frame(width: 64, height: 64)

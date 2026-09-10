@@ -77,7 +77,7 @@ struct ContentView: View {
 
     private var header: some View {
         HStack(spacing: 10) {
-            Image("TelegramIcon")
+            Image("AppLogo")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 30, height: 30)

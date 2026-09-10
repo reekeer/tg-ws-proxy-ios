@@ -11,7 +11,7 @@ struct OnboardingView: View {
                 Spacer()
 
                 VStack(spacing: 14) {
-                    Image("TelegramIcon")
+                    Image("AppLogo")
                         .resizable()
                         .scaledToFit()
                     .frame(width: 96, height: 96)
