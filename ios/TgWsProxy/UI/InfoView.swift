@@ -12,11 +12,9 @@ struct InfoView: View {
             VStack(spacing: 16) {
                 about
                 links
-                Text("Rust-ядро синхронизируется с upstream. Лицензия GPLv3 (ядро) / MIT (оригинал).".tgLoc)
+                Text("GPLv3 (ядро) · MIT (оригинал)".tgLoc)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 4)
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
@@ -34,11 +32,7 @@ struct InfoView: View {
 
             Text("TG WS Proxy".tgLoc)
                 .font(.title3.bold())
-            Text("Локальный MTProto-прокси для Telegram на Rust-ядре".tgLoc)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            Text("Версия \(version)")
+            Text(verbatim: version)
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(.secondary)
         }
@@ -49,10 +43,10 @@ struct InfoView: View {
     private var links: some View {
         VStack(spacing: 0) {
             LinkRow(
-                title: "Мой репозиторий",
-                subtitle: "IMDelewer/tg-ws-proxy-ios",
+                title: "Репозиторий",
+                subtitle: "reekeer/tg-ws-proxy-ios",
                 systemImage: "iphone",
-                url: "https://github.com/IMDelewer/tg-ws-proxy-ios"
+                url: "https://github.com/reekeer/tg-ws-proxy-ios"
             )
             Divider()
             LinkRow(

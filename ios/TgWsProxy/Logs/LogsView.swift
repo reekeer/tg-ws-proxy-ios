@@ -12,6 +12,9 @@ struct LogsTabView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Spacer()
+                ShareLink(item: store.report(context: proxy.diagnosticsContext)) {
+                    Image(systemName: "doc.badge.arrow.up")
+                }
                 ShareLink(item: store.joined()) {
                     Image(systemName: "square.and.arrow.up")
                 }
@@ -33,9 +36,6 @@ struct LogsTabView: View {
             }
             .padding(.horizontal, 18)
 
-            reportCard
-                .padding(.horizontal, 16)
-
             LogConsole(store: store)
                 .card(padding: 0)
                 .padding(.horizontal, 16)
@@ -43,24 +43,6 @@ struct LogsTabView: View {
         }
     }
 
-    private var reportCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label("Отчёты об ошибках".tgLoc, systemImage: "exclamationmark.bubble")
-                .font(.subheadline.weight(.semibold))
-            Text("Приложение адаптировано под мобильные сети, но проблемы с фоновой работой возможны из-за ограничений системы или сети. Если возникла проблема — нажмите «Собрать отчёт» и приложите данные к issue. Мелкие ошибки в логах при работающем прокси можно игнорировать.".tgLoc)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            ShareLink(item: store.report(context: proxy.diagnosticsContext)) {
-                Label("Собрать отчёт".tgLoc, systemImage: "doc.badge.arrow.up")
-                    .font(.subheadline.weight(.semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-            }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.roundedRectangle(radius: 12))
-        }
-        .card()
-    }
 
 }
 

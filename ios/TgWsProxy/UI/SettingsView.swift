@@ -31,16 +31,20 @@ struct SettingsView: View {
                 }
                 HStack {
                     Text("Порт:".tgLoc)
-                    TextField("1443", value: $proxy.configuration.port, format: .number)
+                    TextField("1443", value: $proxy.configuration.port, format: .number.grouping(.never))
                         .multilineTextAlignment(.trailing)
                         .proxyNumberInputBehavior()
                 }
-                Picker("Размер пула:".tgLoc, selection: $proxy.configuration.poolSize) {
-                    ForEach(ProxyConfiguration.allowedPoolSizes, id: \.self) {
-                        Text(String($0)).tag($0)
+                HStack {
+                    Text("Размер пула:".tgLoc)
+                    Picker("Размер пула:".tgLoc, selection: $proxy.configuration.poolSize) {
+                        ForEach(ProxyConfiguration.allowedPoolSizes, id: \.self) {
+                            Text(String($0)).tag($0)
+                        }
                     }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
                 }
-                .pickerStyle(.segmented)
             }
             .disabled(proxy.isRunning)
 
@@ -48,9 +52,9 @@ struct SettingsView: View {
                 Toggle("Использовать Cloudflare".tgLoc, isOn: $proxy.configuration.cloudflareEnabled)
                 TextField("Свой домен (необязательно)".tgLoc, text: $proxy.configuration.cloudflareDomain)
                     .proxyTextInputBehavior()
-                DisclosureGroup("CF Worker домены (\(proxy.cloudflareDomains.count))") {
+                DisclosureGroup("\("Домены CF Worker".tgLoc) (\(proxy.cloudflareDomains.count))") {
                     if proxy.cloudflareDomains.isEmpty {
-                        Text("Список пока пуст")
+                        Text("Список пуст".tgLoc)
                             .foregroundStyle(.secondary)
                     } else {
                         ForEach(proxy.cloudflareDomains, id: \.self) { domain in
@@ -79,7 +83,7 @@ struct SettingsView: View {
                     }
                 } label: {
                     Label(
-                        refreshingDomains ? "Обновление…" : "Обновить список Workers",
+                        refreshingDomains ? "Обновление…".tgLoc : "Обновить список Workers".tgLoc,
                         systemImage: "arrow.clockwise"
                     )
                 }
@@ -163,9 +167,6 @@ struct SettingsView: View {
                     }
                 }
                 Toggle("Liquid Glass".tgLoc, isOn: $settings.liquidGlass)
-                Text("На iOS 26 и новее использует системное стекло. При отключении остаётся лёгкий материал.".tgLoc)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
 
             Section("Поведение".tgLoc) {
@@ -174,29 +175,20 @@ struct SettingsView: View {
                 Toggle("Уведомления".tgLoc, isOn: $settings.notifications)
                 Toggle("Вибрация".tgLoc, isOn: $settings.haptics)
                 Toggle("Удерживать прокси в фоне".tgLoc, isOn: $settings.backgroundKeeper)
-                Text("Локальный режим не переживает сворачивание приложения. Приложение подписывается на обновления геопозиции, чтобы iOS не приостанавливала процесс. Нужен доступ к геопозиции в режиме «Всегда».".tgLoc)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
                 if settings.backgroundKeeper, !BackgroundKeeper.shared.isAuthorizedForBackground {
                     Button {
                         openLocationSettings()
                     } label: {
-                        Label("Открыть настройки геопозиции".tgLoc, systemImage: "location.circle")
+                        Label("Геопозиция: нужен режим «Всегда»".tgLoc, systemImage: "location.circle")
                     }
                 }
             }
 
             if settings.restartRequired {
                 Section {
-                    Label(
-                        "Для полного применения некоторых изменений нужно пересоздать интерфейс приложения.",
-                        systemImage: "arrow.clockwise.circle"
-                    )
-                    .font(.callout)
-                    Button("Перезапустить") {
+                    Button("Перезапустить интерфейс".tgLoc) {
                         settings.restartInterface()
                     }
-                    .buttonStyle(.borderedProminent)
                 }
             }
 
@@ -214,13 +206,6 @@ struct SettingsView: View {
                 }
             }
 
-            if proxy.isRunning {
-                Section {
-                    Text("Настройки прокси заблокированы, пока прокси запущен.".tgLoc)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
         }
         .scrollContentBackground(.hidden)
         .onChange(of: settings.notifications) { _, on in
