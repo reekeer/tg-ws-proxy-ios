@@ -1,30 +1,14 @@
 import CoreLocation
 import Foundation
 
-/// Держит процесс приложения живым, пока Rust-ядро слушает 127.0.0.1 внутри
-/// самого приложения. iOS не даёт обычному процессу держать TCP-сервер в фоне,
-/// но не приостанавливает приложение с активными обновлениями геопозиции.
-///
-/// Нужен только для локального режима: в туннельном режиме ядро живёт
-/// в отдельном процессе PacketTunnelProvider, который система держит сама.
-final class BackgroundKeeper: NSObject {
+final class BackgroundKeeper: NSObject, ObservableObject {
     static let shared = BackgroundKeeper()
-
-    static let settingsKey = "app.backgroundKeeper"
-
-    static var isEnabled: Bool {
-        UserDefaults.standard.object(forKey: settingsKey) as? Bool ?? true
-    }
 
     private let manager = CLLocationManager()
     private(set) var isActive = false
 
-    var authorizationStatus: CLAuthorizationStatus {
-        manager.authorizationStatus
-    }
+    @Published private(set) var authorizationStatus: CLAuthorizationStatus = .notDetermined
 
-    /// Фон удержится только с разрешением «Всегда»: при «При использовании»
-    /// iOS отзывает обновления сразу после сворачивания приложения.
     var isAuthorizedForBackground: Bool {
         authorizationStatus == .authorizedAlways
     }
@@ -32,12 +16,29 @@ final class BackgroundKeeper: NSObject {
     private override init() {
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
-        manager.distanceFilter = 3000
+        manager.desiredAccuracy = kCLLocationAccuracyBest
+        manager.distanceFilter = kCLDistanceFilterNone
         manager.pausesLocationUpdatesAutomatically = false
+        manager.activityType = .other
+        authorizationStatus = manager.authorizationStatus
     }
 
-    func requestAuthorization() {
+    func activate() {
+        guard !isActive else { return }
+        isActive = true
+        requestAuthorization()
+        applyBackgroundMode()
+        manager.startUpdatingLocation()
+    }
+
+    func deactivate() {
+        guard isActive else { return }
+        isActive = false
+        manager.stopUpdatingLocation()
+        manager.allowsBackgroundLocationUpdates = false
+    }
+
+    private func requestAuthorization() {
         switch authorizationStatus {
         case .notDetermined:
             manager.requestWhenInUseAuthorization()
@@ -48,31 +49,20 @@ final class BackgroundKeeper: NSObject {
         }
     }
 
-    func activate() {
-        guard !isActive, Self.isEnabled else { return }
-        requestAuthorization()
+    private func applyBackgroundMode() {
         manager.allowsBackgroundLocationUpdates = isAuthorizedForBackground
-        manager.startUpdatingLocation()
-        isActive = true
-    }
-
-    func deactivate() {
-        guard isActive else { return }
-        manager.stopUpdatingLocation()
-        manager.allowsBackgroundLocationUpdates = false
-        isActive = false
     }
 }
 
 extension BackgroundKeeper: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        authorizationStatus = manager.authorizationStatus
         guard isActive else { return }
-        manager.allowsBackgroundLocationUpdates = isAuthorizedForBackground
+        applyBackgroundMode()
+        requestAuthorization()
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        // locationUnknown приходит, пока система не получила первую координату,
-        // и менеджер продолжает попытки сам — в логах это только шум.
         if (error as? CLError)?.code == .locationUnknown { return }
         fputs("BackgroundKeeper: \(error.localizedDescription)\n", stderr)
     }
