@@ -21,8 +21,6 @@
 Telegram → 127.0.0.1:1443 → Rust core → WSS / Cloudflare → Telegram DC
 ```
 
-What leaves the device is ordinary HTTPS traffic to Cloudflare and `*.web.telegram.org`, not a connection to a well-known Telegram data centre address.
-
 > [!CAUTION]
 > This is an experimental networking tool. Use it at your own risk: the app has not undergone a security audit.
 
@@ -40,83 +38,112 @@ What leaves the device is ordinary HTTPS traffic to Cloudflare and `*.web.telegr
 
 ---
 
+## 📥 Installation
+
+### 1. Download the file
+
+From the [releases page](https://github.com/reekeer/tg-ws-proxy-ios/releases/latest), which also carries a full comparison:
+
+| File | Who it is for |
+|------|---------------|
+| `TgWsProxy-free.ipa` | **anyone unsure.** Installs with any Apple ID |
+| `TgWsProxy-vpn.ipa` | paid Apple Developer account or TrollStore only — needs the Network Extension entitlement |
+
+### 2. Install it on the iPhone
+
+<details>
+<summary><b>Sideloadly</b> — Windows or Mac, over a cable, free Apple ID</summary>
+
+1. Install [Sideloadly](https://sideloadly.io) on the computer. On Windows it asks for iTunes and iCloud from Apple's site, not the ones from the Microsoft Store.
+2. Connect the iPhone by cable and trust the computer.
+3. Drag the `.ipa` into the Sideloadly window, enter your Apple ID and press Start.
+4. With two-factor authentication enabled you need an [app-specific password](https://account.apple.com).
+
+</details>
+
+<details>
+<summary><b>iLoader</b> — straight from the iPhone, no computer</summary>
+
+1. Open iLoader and sign in with your Apple ID.
+2. Add the downloaded `.ipa` and start the installation.
+
+The interface changes noticeably between versions, so follow the prompts inside the app. The limits are the same as with Sideloadly: free account, 7 days, three apps.
+
+</details>
+
+<details>
+<summary><b>AltStore / SideStore</b> — refreshes the signature on its own</summary>
+
+1. Install AltStore following the [instructions on its site](https://altstore.io) — it needs AltServer running on a computer on the same network — or SideStore if no computer will be around.
+2. Inside AltStore pick **+** and choose the downloaded `.ipa`.
+
+The upside is that the signature is renewed automatically while the phone shares a network with the computer, so there is no weekly reinstall by hand.
+
+</details>
+
+<details>
+<summary><b>TrollStore</b> — permanent, no 7-day expiry</summary>
+
+Works only on vulnerable iOS versions — check yours against the [TrollStore compatibility list](https://ios.cfw.guide/installing-trollstore/). If it fits, open the `.ipa` in TrollStore and install.
+
+The signature never expires, which makes this the only method where the app does not fall off after a week. It is also where `TgWsProxy-vpn.ipa` works.
+
+</details>
+
+<details>
+<summary><b>Xcode</b> — build and install it yourself, needs a Mac</summary>
+
+```sh
+git clone --recurse-submodules https://github.com/reekeer/tg-ws-proxy-ios
+cd tg-ws-proxy-ios
+rustup target add aarch64-apple-ios
+open TgWsProxy.xcodeproj
+```
+
+In Xcode open the **TgWsProxy → Signing & Capabilities** tab, pick your team and change the Bundle Identifier to one of your own — Xcode will not sign somebody else's identifier. Then connect the iPhone, select it in the device list and press Run.
+
+</details>
+
+> [!NOTE]
+> On a free Apple ID the signature lasts **7 days**, after which the app stops opening and has to be installed again. No more than three such apps can be on one account at a time.
+
+### 3. Allow background operation
+
+After the first launch open **iOS Settings → TG WS Proxy → Location** and pick **"Always"**.
+
+Without it iOS freezes the proxy seconds after the app is minimised and Telegram falls back to "Connecting…". Location is only there to stop the system from unloading the process — no coordinates are sent anywhere.
+
+If the app was not installed through Xcode, iOS first asks you to trust the certificate: **Settings → General → VPN & Device Management** → your Apple ID → Trust.
+
+### 4. Connect Telegram
+
+Open the app, press the power button and then **"Open in Telegram"** — the proxy is added for you. All that is left is to confirm the connection in Telegram.
+
+---
+
 ## ⚙️ How it works
 
-### The core
+The Rust core runs an MTProto proxy on `127.0.0.1:1443` inside the app. Telegram connects to it like to any other proxy, and the core carries the traffic out over WebSocket — straight to Telegram's servers or through a Cloudflare Worker, falling back to plain TCP when WebSocket is unavailable.
 
-The core is written in Rust and built into a static library, `libtgwsproxy.a`, which Swift calls through a C FFI (`ios/TgWsProxy/Proxy/NativeProxy.swift`):
+From the outside this looks like ordinary HTTPS to Cloudflare and `*.web.telegram.org`.
 
-1. The core binds a TCP listener on `127.0.0.1:1443` and starts a multi-threaded `tokio` runtime.
-2. Telegram opens a connection and sends the 64-byte MTProto handshake; the core decrypts it and works out the target data centre.
-3. It then takes a ready WebSocket from the pool or opens a new one:
-   - a direct WSS connection to `kws{N}.web.telegram.org`;
-   - a Cloudflare Worker domain (the list refreshes automatically and is cached);
-   - a TCP fallback to `149.154.x.x:443` when WebSocket is unavailable.
-4. Traffic is bridged both ways with MTProto encryption, and statistics (connections, pool, volume, errors) are pushed to the UI once per second.
+To keep the proxy from dying when the app is minimised, it subscribes to location updates: to iOS the process looks like active navigation and is not suspended. The price is noticeably faster battery drain. The `TgWsProxy-vpn.ipa` build uses a system VPN tunnel instead, which iOS keeps alive by itself.
 
-The proxy is added to Telegram through a `tg://proxy?server=127.0.0.1&port=1443&secret=dd…` link — the "Open in Telegram" button on the main screen.
-
-### Two modes
-
-| Mode | Where the core lives | When it is used |
-|------|----------------------|-----------------|
-| Local | inside the app process | builds without `--vpn`, and as a fallback when the tunnel fails to start |
-| VPN tunnel | in the system `PacketTunnelProvider` process | builds with `--vpn` and a signed Network Extension entitlement |
-
-The tunnel does not route device traffic: `includedRoutes` is empty and everything is excluded. It exists only so iOS keeps the process holding the core alive, and the loopback interface is shared by every process on the device.
-
-If the Network Extension entitlement fails to sign — the usual case with a free Apple ID — the app switches to local mode on its own and says so in the status line.
-
-### Background operation
-
-iOS does not let an ordinary app hold a TCP server in the background: a few seconds after the app is minimised the process is suspended, port `1443` closes, and Telegram falls back to "Connecting…".
-
-To make local mode survive backgrounding, the app subscribes to coarse location updates (`ios/TgWsProxy/Proxy/BackgroundKeeper.swift`). To the system this looks like active navigation, so the process is not frozen. No coordinates are stored or transmitted anywhere — only the subscription itself matters.
-
-The hold turns on together with the proxy in local mode and turns off when it stops. The switch is under **Settings → Behaviour → "Keep the proxy alive in the background"**.
-
-> [!IMPORTANT]
-> After installing, open **iOS Settings → TG WS Proxy → Location** and pick **"Always"**.
-> With "While Using the App", iOS freezes the process the moment the app is minimised.
-
-Compared with background audio, this approach keeps the connection through phone calls and voice messages, because location is isolated from the audio system, and it needs no manual restarts. The trade-off is noticeably faster battery drain.
+The full walkthrough lives in [ARCHITECTURE.ru.md](ARCHITECTURE.ru.md) (Russian).
 
 ---
 
-## 📦 Installing and building
+## 🛠 Building from source
 
-Ready-made IPAs are built in GitHub Actions (`.github/workflows/build.yml`) in two variants:
-
-- `TgWsProxy-free.ipa` — no entitlements, installs with any Apple ID, stays alive in the background through location;
-- `TgWsProxy-vpn.ipa` — with the Network Extension, held in the background by the system tunnel; needs a profile with `packet-tunnel-provider`.
-
-Both are attached to every release, together with a rundown of which one to pick.
-
-Local builds (Xcode plus Rust with the `aarch64-apple-ios` target):
+Needs Xcode and Rust with the `aarch64-apple-ios` target:
 
 ```sh
-./build.sh                # TgWsProxy-free.ipa
-./build.sh --vpn          # TgWsProxy-vpn.ipa
-./build.sh --sim --install  # simulator
-./build.sh -h             # every flag
+./build.sh                  # TgWsProxy-free.ipa
+./build.sh --vpn            # TgWsProxy-vpn.ipa
+./build.sh --sim --install  # run in the simulator
 ```
 
-The same IPA works with Sideloadly, AltStore, SideStore, iLoader and TrollStore — the installation method does not change the build. For LiveContainer take the build without `--vpn`: it cannot load embedded extensions.
-
-A detailed walkthrough of every installation method lives in [ARCHITECTURE.ru.md](ARCHITECTURE.ru.md).
-
----
-
-## 🔄 Core synchronisation
-
-The Rust core comes from [amurcanov/tg-ws-proxy-android](https://github.com/amurcanov/tg-ws-proxy-android), wired in as a submodule under `vendor/`. Once a week `.github/workflows/upstream-sync.yml` runs `scripts/sync-rust-upstream.sh`: it copies fresh sources into `src-wrapper/`, applies `scripts/patches/ios-ffi.patch` with the iOS-specific differences, checks the build for the host and for `aarch64-apple-ios`, runs the FFI smoke test, and opens a pull request.
-
-The same thing by hand:
-
-```sh
-./scripts/sync-rust-upstream.sh
-./scripts/run-ffi-smoke.sh
-```
+The Rust core comes from [amurcanov/tg-ws-proxy-android](https://github.com/amurcanov/tg-ws-proxy-android) as a submodule and is pulled in automatically once a week by a separate workflow.
 
 ---
 
