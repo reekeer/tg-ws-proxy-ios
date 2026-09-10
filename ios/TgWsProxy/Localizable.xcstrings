@@ -67,20 +67,6 @@
         }
       }
     },
-    "Live Activity / Dynamic Island" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Live Activity / Dynamic Island"
-          }
-        }
-      }
-    },
-    "OK" : {
-
-    },
     "Rust-ядро (Android-форк)" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -389,9 +375,6 @@
         }
       }
     },
-    "Запускаю TG WS Proxy" : {
-
-    },
     "Запусти прокси и открой его в Telegram одной кнопкой." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -413,12 +396,6 @@
           }
         }
       }
-    },
-    "Запустить TG WS Proxy" : {
-
-    },
-    "Запустить прокси" : {
-
     },
     "Зелёный" : {
       "extractionState" : "stale",
@@ -475,17 +452,6 @@
         }
       }
     },
-    "Конфигурация не изменена" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configuration unchanged"
-          }
-        }
-      }
-    },
     "Копировать всё" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -515,17 +481,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No logs"
-          }
-        }
-      }
-    },
-    "Логи пусты. Запустите прокси." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Logs are empty. Start the proxy first."
           }
         }
       }
@@ -585,17 +540,6 @@
         }
       }
     },
-    "Локальный прокси работает, пока приложение открыто. Для постоянной работы в фоне нужен системный VPN-туннель (Network Extension), который доступен не во всех способах установки." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The local proxy works while the app is open. Persistent background operation requires a system VPN tunnel (Network Extension), which is not available with every installation method."
-          }
-        }
-      }
-    },
     "Локальный режим" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -639,17 +583,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
-          }
-        }
-      }
-    },
-    "Настройки заблокированы, пока прокси запущен." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Proxy settings are locked while the proxy is running."
           }
         }
       }
@@ -709,17 +642,6 @@
         }
       }
     },
-    "Нужна сборка Sideload-Widgets или Sideload-Full. В AltStore/LiveContainer-варианте расширение не вложено." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Requires the Sideload-Widgets or Sideload-Full build. The extension is not embedded in AltStore/LiveContainer builds."
-          }
-        }
-      }
-    },
     "Обновить список Workers" : {
 
     },
@@ -759,26 +681,6 @@
         }
       }
     },
-    "Останавливаю TG WS Proxy" : {
-
-    },
-    "Остановить TG WS Proxy" : {
-
-    },
-    "Остановить прокси" : {
-
-    },
-    "Остановлен" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stopped"
-          }
-        }
-      }
-    },
     "Отдача" : {
 
     },
@@ -792,12 +694,6 @@
           }
         }
       }
-    },
-    "Открывает приложение и запускает локальный прокси." : {
-
-    },
-    "Открывает приложение и останавливает прокси." : {
-
     },
     "Открыть в Telegram" : {
       "extractionState" : "stale",
@@ -832,17 +728,6 @@
         }
       }
     },
-    "Отчёт и логи скопированы" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Report and logs copied"
-          }
-        }
-      }
-    },
     "Отчёты об ошибках" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -861,16 +746,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Clear"
-          }
-        }
-      }
-    },
-    "Ошибка deep link" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deep link error"
           }
         }
       }
@@ -1043,17 +918,6 @@
         }
       }
     },
-    "Прокси запускается" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Proxy is starting"
-          }
-        }
-      }
-    },
     "Прокси запущен" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1142,17 +1006,6 @@
         }
       }
     },
-    "Расширение доступно в этой сборке. Разрешите Live Activities в настройках iOS." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The extension is included in this build. Allow Live Activities in iOS Settings."
-          }
-        }
-      }
-    },
     "Режим" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1193,17 +1046,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Collecting data…"
-          }
-        }
-      }
-    },
-    "Сбор логов включён" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log collection enabled"
           }
         }
       }
