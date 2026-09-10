@@ -114,17 +114,6 @@
         }
       }
     },
-    "Rust-ядро синхронизируется с upstream." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Rust core is synchronized with upstream."
-          }
-        }
-      }
-    },
     "t" : {
 
     },
@@ -146,17 +135,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Telegram DC"
-          }
-        }
-      }
-    },
-    "Telegram DC / WSS / Cloudflare · TCP 443" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Telegram DC / WSS / Cloudflare · TCP 443"
           }
         }
       }
@@ -238,17 +216,6 @@
         }
       }
     },
-    "Активные" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Active"
-          }
-        }
-      }
-    },
     "Акцент" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -278,28 +245,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Appearance"
-          }
-        }
-      }
-    },
-    "Всегда свежее ядро" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Always-current core"
-          }
-        }
-      }
-    },
-    "Геопозиция: нужен режим «Всегда»" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Location: “Always” required"
           }
         }
       }
@@ -358,28 +303,6 @@
         }
       }
     },
-    "Задержка TCP-подключения напрямую (без прокси)." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Direct TCP connection latency (without the proxy)."
-          }
-        }
-      }
-    },
-    "Задержка до DC" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DC latency"
-          }
-        }
-      }
-    },
     "Закрыть" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -398,17 +321,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Starting…"
-          }
-        }
-      }
-    },
-    "Запусти прокси и открой его в Telegram одной кнопкой." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start the proxy and open it in Telegram with one button."
           }
         }
       }
@@ -534,17 +446,6 @@
         }
       }
     },
-    "Локальный MTProto-прокси для Telegram на быстром Rust-ядре" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A local Telegram MTProto proxy powered by a fast Rust core"
-          }
-        }
-      }
-    },
     "Локальный прокси" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -610,17 +511,6 @@
         }
       }
     },
-    "недоступен" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "unavailable"
-          }
-        }
-      }
-    },
     "Нет доступа к кэшу приложения." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -650,17 +540,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Refreshing…"
-          }
-        }
-      }
-    },
-    "Один тап" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "One tap"
           }
         }
       }
@@ -704,17 +583,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open in Telegram"
-          }
-        }
-      }
-    },
-    "Открыть логи отдельно" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open logs separately"
           }
         }
       }
@@ -873,28 +741,6 @@
         }
       }
     },
-    "Приватность" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Privacy"
-          }
-        }
-      }
-    },
-    "Проверить задержку до DC" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test DC latency"
-          }
-        }
-      }
-    },
     "Прокси запущен" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -935,17 +781,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The proxy is already running."
-          }
-        }
-      }
-    },
-    "Пул" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pool"
           }
         }
       }
@@ -1114,17 +949,6 @@
         }
       }
     },
-    "Соединения" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connections"
-          }
-        }
-      }
-    },
     "Состояние" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1180,17 +1004,6 @@
         }
       }
     },
-    "Трафик идёт через WSS/Cloudflare к дата-центрам Telegram." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Traffic goes through WSS/Cloudflare to Telegram data centers."
-          }
-        }
-      }
-    },
     "Уведомления" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1198,61 +1011,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notifications"
-          }
-        }
-      }
-    },
-    "Удерживать прокси в фоне" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep the proxy alive in the background"
-          }
-        }
-      }
-    },
-    "Фон выключен: прокси работает, пока приложение открыто." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Background hold is off: the proxy runs while the app is open."
-          }
-        }
-      }
-    },
-    "Фон: геопозиция." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Background: location updates."
-          }
-        }
-      }
-    },
-    "Фон: нужен доступ к геопозиции в режиме «Всегда»." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Background: location access must be set to “Always”."
-          }
-        }
-      }
-    },
-    "Фон: системный VPN-туннель." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Background: system VPN tunnel."
           }
         }
       }
@@ -1275,6 +1033,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App language"
+          }
+        }
+      }
+    },
+    "Без доступа к геопозиции в режиме «Всегда» прокси остановится, как только вы свернёте приложение." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Without location access set to “Always” the proxy stops as soon as you leave the app."
+          }
+        }
+      }
+    },
+    "Прокси перестал отвечать" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The proxy stopped responding"
           }
         }
       }
