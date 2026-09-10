@@ -23,7 +23,14 @@
       }
     },
     "%lld мс" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ms"
+          }
+        }
+      }
     },
     "%lld строк" : {
       "extractionState" : "stale",
@@ -40,9 +47,6 @@
 
     },
     "1443" : {
-
-    },
-    "CF Worker домены (%lld)" : {
 
     },
     "Cloudflare" : {
@@ -99,20 +103,6 @@
           }
         }
       }
-    },
-    "Rust-ядро синхронизируется с upstream. Лицензия GPLv3 (ядро) / MIT (оригинал)." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The Rust core is synchronized with upstream. GPLv3 for the core / MIT for the original project."
-          }
-        }
-      }
-    },
-    "t" : {
-
     },
     "Telegram → localhost → WSS → Telegram DC" : {
       "extractionState" : "stale",
@@ -245,20 +235,6 @@
         }
       }
     },
-    "В сети" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Online"
-          }
-        }
-      }
-    },
-    "Версия %@" : {
-
-    },
     "Вибрация" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -325,11 +301,15 @@
         }
       }
     },
-    "Для полного применения некоторых изменений нужно пересоздать интерфейс приложения." : {
-
-    },
     "Загрузка" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Down"
+          }
+        }
+      }
     },
     "Задержка TCP-подключения напрямую (без прокси)." : {
       "extractionState" : "stale",
@@ -507,17 +487,6 @@
         }
       }
     },
-    "Локальный MTProto-прокси для Telegram на Rust-ядре" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Local MTProto proxy for Telegram powered by Rust"
-          }
-        }
-      }
-    },
     "Локальный MTProto-прокси для Telegram на быстром Rust-ядре" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -551,30 +520,15 @@
         }
       }
     },
-    "Мой репозиторий" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "My repository"
-          }
-        }
-      }
-    },
-    "На iOS 26 и новее использует системное стекло. При отключении остаётся лёгкий материал." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uses system Liquid Glass on iOS 26 and newer. When disabled, a light material is used instead."
-          }
-        }
-      }
-    },
     "Нажмите, чтобы скопировать Telegram-секрет" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to copy the Telegram secret"
+          }
+        }
+      }
     },
     "Настройки" : {
       "extractionState" : "stale",
@@ -583,17 +537,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
-          }
-        }
-      }
-    },
-    "Настройки прокси заблокированы, пока прокси запущен." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Proxy settings are locked while the proxy is running."
           }
         }
       }
@@ -643,10 +586,24 @@
       }
     },
     "Обновить список Workers" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh the Workers list"
+          }
+        }
+      }
     },
     "Обновление…" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refreshing…"
+          }
+        }
+      }
     },
     "Один тап" : {
       "extractionState" : "stale",
@@ -682,15 +639,11 @@
       }
     },
     "Отдача" : {
-
-    },
-    "Отключено" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Disconnected"
+            "value" : "Up"
           }
         }
       }
@@ -728,17 +681,6 @@
         }
       }
     },
-    "Отчёты об ошибках" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Error reports"
-          }
-        }
-      }
-    },
     "Очистить" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -772,9 +714,6 @@
         }
       }
     },
-    "Перезапустить" : {
-
-    },
     "Переопределения адресов" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -804,17 +743,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Share"
-          }
-        }
-      }
-    },
-    "Подключено" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connected"
           }
         }
       }
@@ -892,17 +820,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Privacy"
-          }
-        }
-      }
-    },
-    "Приложение адаптировано под мобильные сети, но проблемы с фоновой работой возможны из-за ограничений системы или сети. Если возникла проблема — нажмите «Собрать отчёт» и приложите данные к issue. Мелкие ошибки в логах при работающем прокси можно игнорировать." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The app is adapted for mobile networks, but background issues are still possible due to system or network limits. If you hit a problem, tap “Collect report” and attach the data to your issue. Minor log errors while the proxy works fine can be ignored."
           }
         }
       }
@@ -1095,7 +1012,14 @@
       }
     },
     "Секрет скопирован" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Secret copied"
+          }
+        }
+      }
     },
     "Системная" : {
       "extractionState" : "stale",
@@ -1108,17 +1032,6 @@
         }
       }
     },
-    "Системный VPN-туннель удерживает прокси активным в фоне." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The system VPN tunnel keeps the proxy active in the background."
-          }
-        }
-      }
-    },
     "Скорость" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1126,17 +1039,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Speed"
-          }
-        }
-      }
-    },
-    "Собрать отчёт" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Collect report"
           }
         }
       }
@@ -1162,9 +1064,6 @@
           }
         }
       }
-    },
-    "Список пока пуст" : {
-
     },
     "Строк:" : {
       "extractionState" : "stale",
@@ -1243,46 +1142,6 @@
         }
       }
     },
-    "Локальный прокси работает, пока приложение открыто. Включите удержание фона в настройках или используйте сборку с VPN-туннелем." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The local proxy runs while the app is open. Enable background hold in settings or use a build with the VPN tunnel."
-          }
-        }
-      }
-    },
-    "Локальный режим не переживает сворачивание приложения. Приложение подписывается на обновления геопозиции, чтобы iOS не приостанавливала процесс. Нужен доступ к геопозиции в режиме «Всегда»." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Local mode does not survive backgrounding. The app subscribes to location updates so iOS does not suspend the process. Location access must be set to “Always”."
-          }
-        }
-      }
-    },
-    "Открыть настройки геопозиции" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open location settings"
-          }
-        }
-      }
-    },
-    "Прокси удерживается в фоне через геопозицию." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Location updates keep the proxy alive in the background."
-          }
-        }
-      }
-    },
     "Удерживать прокси в фоне" : {
       "localizations" : {
         "en" : {
@@ -1293,12 +1152,102 @@
         }
       }
     },
-    "Чтобы прокси не засыпал, разрешите доступ к геопозиции в режиме «Всегда» в настройках iOS." : {
+    "Фон: системный VPN-туннель." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Set location access to “Always” in iOS settings so the proxy does not go to sleep."
+            "value" : "Background: system VPN tunnel."
+          }
+        }
+      }
+    },
+    "Фон: геопозиция." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background: location updates."
+          }
+        }
+      }
+    },
+    "Фон: нужен доступ к геопозиции в режиме «Всегда»." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background: location access must be set to “Always”."
+          }
+        }
+      }
+    },
+    "Фон выключен: прокси работает, пока приложение открыто." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background hold is off: the proxy runs while the app is open."
+          }
+        }
+      }
+    },
+    "Геопозиция: нужен режим «Всегда»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location: “Always” required"
+          }
+        }
+      }
+    },
+    "Перезапустить интерфейс" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart the interface"
+          }
+        }
+      }
+    },
+    "GPLv3 (ядро) · MIT (оригинал)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPLv3 (core) · MIT (original)"
+          }
+        }
+      }
+    },
+    "Репозиторий" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repository"
+          }
+        }
+      }
+    },
+    "Домены CF Worker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CF Worker domains"
+          }
+        }
+      }
+    },
+    "Список пуст" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The list is empty"
           }
         }
       }
