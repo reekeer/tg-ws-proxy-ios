@@ -96,35 +96,6 @@ private struct GlassBarModifier: ViewModifier {
     }
 }
 
-struct LiveBadge: View {
-    @State private var pulse = false
-
-    var body: some View {
-        HStack(spacing: 6) {
-            ZStack {
-                Circle()
-                    .fill(Color.tgConnected.opacity(0.35))
-                    .frame(width: 16, height: 16)
-                    .scaleEffect(pulse ? 1.6 : 0.8)
-                    .opacity(pulse ? 0 : 1)
-                Circle()
-                    .fill(Color.tgConnected)
-                    .frame(width: 8, height: 8)
-            }
-            Text(verbatim: "В сети".tgLoc)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(Color.tgConnected)
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 5)
-        .glassBar()
-        .onAppear {
-            withAnimation(.easeOut(duration: 1.1).repeatForever(autoreverses: false)) {
-                pulse = true
-            }
-        }
-    }
-}
 
 struct InfoRow: View {
     let title: String

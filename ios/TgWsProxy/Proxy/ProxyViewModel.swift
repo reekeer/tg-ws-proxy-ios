@@ -88,15 +88,15 @@ final class ProxyViewModel: ObservableObject {
 
     var backgroundNote: String {
         if engine.runsInBackground {
-            return "Системный VPN-туннель удерживает прокси активным в фоне.".tgLoc
+            return "Фон: системный VPN-туннель.".tgLoc
         }
         if BackgroundKeeper.isEnabled {
             if BackgroundKeeper.shared.isAuthorizedForBackground {
-                return "Прокси удерживается в фоне через геопозицию.".tgLoc
+                return "Фон: геопозиция.".tgLoc
             }
-            return "Чтобы прокси не засыпал, разрешите доступ к геопозиции в режиме «Всегда» в настройках iOS.".tgLoc
+            return "Фон: нужен доступ к геопозиции в режиме «Всегда».".tgLoc
         }
-        return "Локальный прокси работает, пока приложение открыто. Включите удержание фона в настройках или используйте сборку с VPN-туннелем.".tgLoc
+        return "Фон выключен: прокси работает, пока приложение открыто.".tgLoc
     }
 
     func toggle() {

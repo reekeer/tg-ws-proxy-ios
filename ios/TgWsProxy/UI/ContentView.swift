@@ -85,14 +85,9 @@ struct ContentView: View {
             Text(tab.title)
                 .font(.title2.bold())
             Spacer()
-            if proxy.isRunning {
-                LiveBadge()
-                    .transition(.scale.combined(with: .opacity))
-            }
         }
         .animation(.snappy, value: tab)
         .padding(.horizontal, 20)
-        .animation(.snappy, value: proxy.isRunning)
     }
 
 }
@@ -218,13 +213,6 @@ private struct HomeView: View {
 
     private var statusCard: some View {
         VStack(spacing: 12) {
-            InfoRow(
-                title: "Состояние",
-                value: proxy.isRunning ? "Подключено".tgLoc : "Отключено".tgLoc,
-                systemImage: "dot.radiowaves.left.and.right",
-                valueColor: proxy.isRunning ? .tgConnected : .secondary
-            )
-            Divider()
             InfoRow(title: "Режим", value: proxy.modeTitle, systemImage: "shield.lefthalf.filled")
             Divider()
             InfoRow(
@@ -273,10 +261,17 @@ private struct HomeView: View {
         Button {
             if let url = proxy.telegramURL() { openURL(url) }
         } label: {
-            Label("Открыть в Telegram".tgLoc, systemImage: "paperplane.fill")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
+            HStack(spacing: 8) {
+                Image("TelegramIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 22, height: 22)
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                Text("Открыть в Telegram".tgLoc)
+            }
+            .font(.headline)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
         }
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.roundedRectangle(radius: 16))
