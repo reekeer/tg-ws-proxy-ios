@@ -1,13 +1,13 @@
-<h1 align="center">TG WS Proxy iOS</h1>
+<h1 align="center">TG WS Proxy iOS (Workflow Fix Fork)</h1>
 
-<h4 align="center">A local Telegram MTProto proxy for iOS powered by a Rust core, WidgetKit, Live Activity, and an optional Packet Tunnel.</h4>
+<h4 align="center">Local MTProto proxy for Telegram on iOS featuring a Rust core, Live Activity, and an embedded Silent Audio sandbox bypass. Built via GitHub Actions.</h4>
 
 <p align="center">
-  <a href="../README.md">Русский</a>
+  <a href="../README.md">Русский 🇷🇺</a>
 </p>
 
 <p align="center">
-  <a href="../LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue?style=for-the-badge&logo=gnu&logoColor=white" alt="GPLv3"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue?style=for-the-badge&logo=gnu&logoColor=white" alt="GPLv3"></a>
   <img src="https://img.shields.io/badge/iOS-17%2B-black?style=for-the-badge&logo=apple&logoColor=white" alt="iOS 17+">
   <img src="https://img.shields.io/badge/Swift-SwiftUI-F05138?style=for-the-badge&logo=swift&logoColor=white" alt="SwiftUI">
   <img src="https://img.shields.io/badge/Core-Rust-000000?style=for-the-badge&logo=rust&logoColor=white" alt="Rust">
@@ -15,143 +15,59 @@
 
 ---
 
-**TG WS Proxy iOS** runs the Rust version of TG WS Proxy on iPhone and exposes a local MTProto endpoint to Telegram:
+**TG WS Proxy iOS** runs the Rust version of TG WS Proxy on an iPhone and provides Telegram with a local MTProto endpoint:
 
 ```text
 Telegram → 127.0.0.1:1443 → Rust TG WS Proxy → WSS / Cloudflare → Telegram DC
 ```
 
 > [!CAUTION]
-> **This is experimental networking software. It works, but an invalid Packet Tunnel configuration may completely break device connectivity until the VPN is disabled, the app is reinstalled, or the iPhone is restarted. The project has not received a security audit. Use it at your own risk and never install an IPA from an untrusted source.**
+> **This is an experimental networking tool. Use it entirely at your own risk. The application has not undergone a security audit.**
 
 ---
 
-## ✨ Features
-
-- Rust-powered local MTProto proxy;
-- Cloudflare Workers and custom domains;
-- WebSocket pool sizes `2`, `4`, or `6`;
-- traffic, pool, logs, and diagnostics;
-- optional Liquid Glass interface;
-- Live Activity and Dynamic Island through the single `la` component;
-- interactive Home Screen Widget and Control Center toggle;
-- App Intents, Siri Shortcuts, and configuration deep links;
-- Russian and English UI;
-- loopback fallback when Packet Tunnel is unavailable.
+## 🤖 AI Disclaimer
+> [!NOTE]
+> All build script fixes, Xcode 16.2+ compiler patches, iOS sandbox bypasses, and CI/CD automation setups in this fork were implemented in close collaboration with the **Gemini AI**. The author is not responsible for any hidden bugs or future breakages.
 
 ---
 
-## 🧬 Credits
+## ⚡ Fork Features (What's Fixed)
+This repository fixes critical compilation errors found in the original project under recent Xcode versions (16.2+), removes the breaking `.glassEffect` UI modifier, and adds automated cloud build scripts 
+via **GitHub Actions** without requiring a physical Mac computer.
+## 📦 Free Apple ID Background Sandbox Bypass (Important!)
 
-- [Flowseal/tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) — original project and concept;
-- [amurcanov/tg-ws-proxy-android](https://github.com/amurcanov/tg-ws-proxy-android) — Rust core and upstream fork;
-- [Flowseal/tg-ws-proxy issue #389](https://github.com/Flowseal/tg-ws-proxy/issues/389) — FAQ and discussion;
-- [IMDelewer/tg-ws-proxy-ios](https://github.com/IMDelewer/tg-ws-proxy-ios) — iOS application, Apple framework integrations, and build tooling.
+In the original project, background execution on a free developer account was impossible because the system VPN (`NetworkExtension`) dropped after 8 seconds due to missing paid signature entitlements.
 
-The Rust source is included as a git submodule under `vendor/tg-ws-proxy-android`. Only the `src/*.rs` files, `Cargo.toml`, and `Cargo.lock` are used. iOS-specific changes are applied through `scripts/patches/ios-ffi.patch`.
+This fork introduces an **Automated Background Location Engine Patch (CoreLocation)** that completely solves this problem without using clunky audio hacks! When building with the **`-c la`** flag, the script automatically injects a background GPS tracker into the Swift code. To iOS, the app looks like an active navigation tool, which prevents process suspension and allows the Rust core to run indefinitely.
 
----
+### 🚨 CRITICALLY IMPORTANT CONFIGURATION (INSTRUCTIONS):
+To prevent the proxy from sleeping in the background, you must adjust your iOS settings after the first installation:
+1. Open the system **Settings** app on your iPhone.
+2. Scroll down to the app list and select **TgWsProxy**.
+3. Tap on **Location**.
+4. **YOU MUST CHANGE THE PERMISSION TO "ALWAYS"!**
+*If left on "While Using the App", iOS will freeze the proxy process the exact second you minimize the app or lock your screen.*
 
-## 📦 Installation variants
+### ✨ Advantages of the GPS Fix Over Audio Hacks:
+- ✅ **Full Call Stability:** Phone calls and VoIP calls in other apps NO LONGER break the proxy loop because iOS location tracking is entirely separated from the audio system.
+- ✅ **Media & Voice Note Stability:** Recording/playing voice messages, "round video notes," and videos in Telegram no longer interrupt the proxy connection.
+- ✅ **True Autonomy:** No manual restarts (Stop/Start) required — the background connection stays alive continuously.
 
-| Variant | Bundle ID | Background operation |
-| :--- | :--- | :--- |
-| AltStore / SideStore | `com.delewer.tgwsproxy.altstore` | depends on available entitlements |
-| Sideload / iLoader / TrollStore | `com.delewer.tgwsproxy.sideload` | Packet Tunnel with a compatible signature |
-| LiveContainer | `com.delewer.tgwsproxy.lc` | foreground guest process only |
-| Simulator | `com.delewer.tgwsproxy.sim` | automatic loopback fallback |
-
-A regular iOS application cannot remain active forever in the background. Persistent operation requires `PacketTunnelProvider`, which iOS runs separately from the application UI.
-
-With a free Apple ID, profiles expire after seven days. AltStore may refresh them while AltServer is reachable, but it cannot add missing Network Extension or App Groups entitlements. LiveContainer cannot register embedded app extensions.
-
----
-
-## 🚀 Build
-
-```bash
-rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
-./build.sh -p sim --install
-./build.sh -p sim -c wd,la,cc,vpn --install
-./build.sh -p side -c wd,la,cc,vpn
-./build.sh -p alt
-./build.sh -p lc
-```
-
-Platforms are `sim`, `side`, `alt`, and `lc`.
-
-Components:
-
-| Code | Component |
-| :---: | :--- |
-| `wd` | Home Screen Widget |
-| `la` | Live Activity and Dynamic Island |
-| `cc` | Control Center toggle on iOS 18+ |
-| `vpn` | Packet Tunnel / Network Extension |
-| `none` | application only |
+### ⚠️ Known Trade-offs:
+1. **Battery Drain:** Continuous background GPS tracking combined with the active Rust core will drain your device's battery significantly faster. It is recommended for devices with healthy battery life or while connected to a power source.
 
 ---
 
-## 🔗 Deep links
+## 🧬 Origins, Sources and Credits
 
-```text
-tgwsproxy://?action=start
-tgwsproxy://?action=stop
-tgwsproxy://?action=update_cf_link
-tgwsproxy://?action=show_cf_domains
-tgwsproxy://?action=add_cf_domain&domain=worker.example.com
-tgwsproxy://?action=clear_cf_domain
-tgwsproxy://?action=config&addr=127.0.0.1&port=1443&pool=4&cf_proxy=true&start=true
-```
+This project is the result of combining, modifying, and fixing a chain of open-source solutions:
+
+- [Flowseal/tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) — The original concept, the idea of bypassing restrictions via WebSocket, and the baseline proxy core.
+- [amurcanov/tg-ws-proxy-android](https://github.com/amurcanov/tg-ws-proxy-android) — The actively maintained Rust core fork and Android version, used in this project as the upstream repository for automated weekly syncs.
+- [reekeer/tg-ws-proxy-ios](https://github.com/reekeer/tg-ws-proxy-ios) — The original native Swift/SwiftUI graphical wrapper and Apple framework integration.
+-
 
 ---
 
-## 🔄 Upstream automation
-
-Initialize the submodule:
-
-```bash
-git submodule update --init
-```
-
-Sync the Rust wrapper to the current submodule commit:
-
-```bash
-./scripts/sync-rust-upstream.sh
-cargo check --manifest-path src-wrapper/Cargo.toml --locked
-```
-
----
-
-## 📚 Documentation
-
-- [Architecture and how it works (Russian)](ARCHITECTURE.ru.md)
-
----
-
-## 🗂 Structure
-
-```text
-ios/TgWsProxy/App/       app lifecycle, settings, deep links
-ios/TgWsProxy/Logs/      log capture and export
-ios/TgWsProxy/Proxy/     engines, FFI, ActivityKit, intents
-ios/TgWsProxy/UI/        SwiftUI and Liquid Glass
-ios/PacketTunnel/        Network Extension
-ios/StatusWidgets/       widgets, Live Activity, Control Center
-src-wrapper/             Rust working copy (upstream + iOS patch)
-vendor/tg-ws-proxy-android/  upstream Rust repository (submodule)
-scripts/patches/         reproducible iOS FFI patch
-```
-
----
-
-## ⚖️ Licenses
-
-The combined project and Rust fork are distributed under [GPLv3](../LICENSE). The original Flowseal project contains MIT-licensed work; its license is included as [LICENSE-flowseal](../LICENSE-flowseal).
-
----
-
-<p align="center">
-  Powered by <a href="https://github.com/Flowseal/tg-ws-proxy">Flowseal/tg-ws-proxy</a>
-  and <a href="https://github.com/amurcanov/tg-ws-proxy-android">amurcanov/tg-ws-proxy-android</a>
-</p>
+<p align="center"><sub>Workflow modification and bugfixes prepared by <a href="https://github.com">Adolfsmikler</a></sub></p>

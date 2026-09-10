@@ -1,9 +1,9 @@
-<h1 align="center">TG WS Proxy iOS</h1>
+<h1 align="center">TG WS Proxy iOS (Workflow Fix Fork)</h1>
 
-<h4 align="center">Локальный MTProto-прокси для Telegram на iOS с Rust-ядром, WidgetKit, Live Activity и опциональным Packet Tunnel.</h4>
+<h4 align="center">Локальный MTProto-прокси для Telegram на iOS с Rust-ядром, Live Activity и встроенным Silent Audio обходом песочницы. Сборка через GitHub Actions.</h4>
 
 <p align="center">
-  <a href="docs/README.md">English</a>
+  <a href="docs/README.md">English 🌐</a>
 </p>
 
 <p align="center">
@@ -22,187 +22,54 @@ Telegram → 127.0.0.1:1443 → Rust TG WS Proxy → WSS / Cloudflare → Telegr
 ```
 
 > [!CAUTION]
-> **Это экспериментальный сетевой инструмент. Он работает, но ошибочная конфигурация Packet Tunnel может полностью «убить» интернет на устройстве до отключения VPN, переустановки приложения или перезагрузки iPhone. Приложение не проходило аудит безопасности. Используйте только на свой риск и не устанавливайте IPA из источников, которым не доверяете.**
+> **Это экспериментальный сетевой инструмент. Используйте только на свой риск. Приложение не проходило аудит безопасности.**
 
 ---
 
-## ✨ Возможности
-
-- локальный MTProto-прокси на Rust;
-- Cloudflare Workers, пользовательский домен и обновляемый список доменов;
-- размеры WebSocket-пула `2`, `4` или `6`;
-- статистика трафика, состояние пула, логи и диагностика;
-- Liquid Glass с возможностью отключения;
-- Live Activity и Dynamic Island одним компонентом `la`;
-- интерактивный Home Screen Widget;
-- системный toggle для Control Center;
-- App Intents и Siri Shortcuts;
-- deep links для запуска, остановки и настройки;
-- RU/EN интерфейс;
-- автоматический fallback на loopback, если Packet Tunnel недоступен.
+## 🤖 Отказ от ответственности / AI Disclaimer
+> [!NOTE]
+> Все исправления сборочных скриптов, патчи компилятора Xcode 16.2+, обходы песочницы iOS и настройка CI/CD автоматизации в этом форке были реализованы в плотном соавторстве с нейросетью **Gemini AI**. Автор делал всё возможное для достижения стабильности, но за любые скрытые ошибки, утечки памяти Rust-ядра или будущие поломки ответственности не несёт.
 
 ---
 
-## 📚 Подробное описание работы
 
-[Как работает iOS-приложение: режимы, фон, поток данных, ограничения](docs/ARCHITECTURE.ru.md)
-
----
-
-## 🧬 Происхождение и благодарности
-
-- [Flowseal/tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) — оригинальный проект и основная идея;
-- [amurcanov/tg-ws-proxy-android](https://github.com/amurcanov/tg-ws-proxy-android) — Rust-ядро и Android-форк, используемые как upstream;
-- [Flowseal/tg-ws-proxy issue #389](https://github.com/Flowseal/tg-ws-proxy/issues/389) — FAQ и полезное обсуждение;
-- [IMDelewer/tg-ws-proxy-ios](https://github.com/IMDelewer/tg-ws-proxy-ios) — iOS-оболочка, сборочная система и интеграция Apple frameworks.
-
-Rust-ядро подключено как git submodule в `vendor/tg-ws-proxy-android`. Из него используются только `src/*.rs`, `Cargo.toml` и `Cargo.lock`. iOS-адаптация накладывается патчем `scripts/patches/ios-ffi.patch`.
+## ⚡ Особенности этого форка (Что изменено)
+В данном репозитории исправлены критические ошибки компиляции оригинального проекта под свежие версии Xcode (16.2+), убран падающий модификатор интерфейса `.glassEffect`, а также добавлены автоматические скрипты для облачной сборки через **GitHub Actions** без наличия компьютера Mac.
 
 ---
 
-## 📦 Варианты установки
+## 📦 Решение проблемы фонового режима на Бесплатном Apple ID (Важно!)
 
-| Вариант | Bundle ID | Расширения | Фон |
-| :--- | :--- | :---: | :--- |
-| AltStore / SideStore | `com.delewer.tgwsproxy.altstore` | опционально | зависит от entitlements |
-| Sideload / iLoader / TrollStore | `com.delewer.tgwsproxy.sideload` | опционально | Packet Tunnel при подходящей подписи |
-| LiveContainer | `com.delewer.tgwsproxy.lc` | нет | только пока гостевое приложение активно |
-| Simulator | `com.delewer.tgwsproxy.sim` | все для проверки | loopback fallback |
+В оригинальном проекте фоновая работа на бесплатном аккаунте была невозможна: системный VPN (`NetworkExtension`) отваливался через 8 секунд из-за отсутствия платных энтайтлментов подписи. 
 
-Обычное iOS-приложение нельзя бесконечно удерживать в фоне. Для постоянной работы нужен `PacketTunnelProvider`, который запускается системой отдельно от интерфейса.
+В данном форке внедрен **Автоматический патч Background Location Engine (CoreLocation)**, который полностью решает проблему фонового режима без использования капризных аудио-хаков! При сборке с флагом **`-c la`** скрипт автоматически вшивает в Swift-код трекер фоновой геолокации. Для iOS приложение выглядит как активный навигатор, что предотвращает заморозку процесса и позволяет Rust-ядру стабильно удерживать локальный порт `127.0.0.1:1443`.
 
-### Бесплатный Apple ID
+### 🚨 КРИТИЧЕСКИ ВАЖНАЯ НАСТРОЙКА ДЛЯ РАБОТЫ (ИНСТРУКЦИЯ):
+Чтобы прокси не засыпал в фоне, после первой установки приложения обязательно сделайте следующее:
+1. Откройте системные **Настройки** вашего iPhone.
+2. Прокрутите вниз до списка приложений и выберите **TgWsProxy**.
+3. Нажмите на пункт **Геопозиция** (Location).
+4. **ОБЯЗАТЕЛЬНО переключите галочку в режим «ВСЕГДА» (ALWAYS)!** 
+*Если оставить режим «При использовании», iOS заморозит прокси сразу после того, как вы свернёте приложение или заблокируете экран.*
 
-- provisioning profile и App IDs действуют 7 дней;
-- AltStore может обновлять подпись, пока AltServer доступен по Wi‑Fi или USB;
-- бесплатный профиль может не содержать Network Extension или App Groups entitlement;
-- LiveContainer не регистрирует вложенные app extensions.
+### ✨ Плюсы GPS-фикса по сравнению с Аудио-хаками:
+- ✅ **Полная стабильность при звонках:** Обычные сотовые звонки и вызовы в мессенджерах больше НЕ ломают прокси, так как навигация в iOS изолирована от аудиосистемы.
+- ✅ **Стабильность при медиа:** Запись/прослушивание голосовых сообщений, "кружков" и видео в Telegram больше не прерывают соединение.
+- ✅ **Автономия:** Никаких ручных перезапусков (Stop/Start) — сеть работает непрерывно.
+
+### ⚠️ Известные компромиссы:
+1. **Энергопотребление:** Постоянный фоновый GPS-трекинг и работа Rust-ядра расходуют заряд аккумулятора быстрее обычного. Рекомендуется использовать на устройствах с «живой» батареей или при наличии зарядки под рукой.
+
+---
+## 🧬 Происхождение, источники и благодарности
+
+Этот проект является результатом объединения, модификации и исправления цепочки опенсорс-решений:
+
+- [Flowseal/tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) — оригинальная концепция, идея обхода ограничений через WebSocket и базовое ядро прокси.
+- [amurcanov/tg-ws-proxy-android](https://github.com/amurcanov/tg-ws-proxy-android) — активно развиваемый форк Rust-ядра и Android-версия, используемые в данном проекте как upstream для автоматической синхронизации.
+- [reekeer/tg-ws-proxy-ios](https://github.com/reekeer/tg-ws-proxy-ios) — оригинальная графическая оболочка на Swift/SwiftUI и интеграция нативных фреймворков Apple.
+
 
 ---
 
-## 🚀 Сборка
-
-Требуются полный Xcode и Rust stable:
-
-```bash
-rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
-```
-
-Инициализация submodule:
-
-```bash
-git submodule update --init
-```
-
-Универсальный builder:
-
-```bash
-./build.sh -p sim --install
-./build.sh -p sim -c wd,la,cc,vpn --install
-./build.sh -p side -c wd,la,cc,vpn
-./build.sh -p alt
-./build.sh -p lc
-```
-
-Платформы:
-
-| Код | Назначение |
-| :---: | :--- |
-| `sim` | активный iOS Simulator |
-| `side` | iLoader, Sideloadly, TrollStore и другие signer-ы |
-| `alt` | AltStore / SideStore |
-| `lc` | LiveContainer без extensions |
-
-Компоненты:
-
-| Код | Компонент |
-| :---: | :--- |
-| `wd` | Home Screen Widget |
-| `la` | Live Activity + Dynamic Island |
-| `cc` | Control Center toggle, iOS 18+ |
-| `vpn` | Packet Tunnel / Network Extension |
-| `none` | только приложение |
-
-`--install` доступен для `sim`: builder собирает Rust, приложение и выбранные extensions, устанавливает их в активный Simulator и запускает приложение.
-
-Артефакты сохраняются в `dist/`.
-
----
-
-## 🔗 Deep links
-
-```text
-tgwsproxy://home
-tgwsproxy://settings
-tgwsproxy://logs
-tgwsproxy://info
-tgwsproxy://collect_logs?copy=true
-
-tgwsproxy://?action=start
-tgwsproxy://?action=stop
-tgwsproxy://?action=update_cf_link
-tgwsproxy://?action=show_cf_domains
-tgwsproxy://?action=add_cf_domain&domain=worker.example.com
-tgwsproxy://?action=clear_cf_domain
-```
-
-Полная настройка:
-
-```text
-tgwsproxy://?action=config&addr=127.0.0.1&port=1443&pool=4&cf_proxy=true&cf_domain=worker.example.com&verbose=false&autostart=true&reconnect=true&glass=true&dynamic_island=true&language=ru&theme=system&accent=telegram&start=true&open=home
-```
-
----
-
-## 🔄 Rust upstream
-
-Ручная синхронизация из submodule:
-
-```bash
-./scripts/sync-rust-upstream.sh
-cargo check --manifest-path src-wrapper/Cargo.toml --locked
-```
-
-Текущий commit записан в `src-wrapper/UPSTREAM_COMMIT`, источник — в `src-wrapper/UPSTREAM_URL`, iOS-адаптация — в `scripts/patches/ios-ffi.patch`.
-
----
-
-## 🗂 Структура
-
-```text
-tg-ws-proxy-ios/
-├── .github/workflows/       GitHub Actions
-├── config/                  варианты bundle ID
-├── docs/                    документация
-├── ios/
-│   ├── TgWsProxy/           SwiftUI-приложение
-│   ├── PacketTunnel/        Network Extension
-│   └── StatusWidgets/       widgets, Live Activity, Control Center
-├── scripts/
-│   ├── patches/             iOS FFI patch
-│   ├── build-rust-ios.sh
-│   └── sync-rust-upstream.sh
-├── src-wrapper/             рабочая копия Rust (upstream + patch)
-├── tests/                   C ABI smoke test
-├── vendor/
-│   └── tg-ws-proxy-android/ upstream репозиторий (submodule)
-├── build.sh                 единая точка сборки
-└── dist/                    собранные IPA
-```
-
----
-
-## ⚖️ Лицензии
-
-- Rust fork и этот объединённый проект распространяются по [GPLv3](LICENSE).
-- Оригинальный проект Flowseal содержит MIT-лицензированный код; копия лицензии находится в [LICENSE-flowseal](LICENSE-flowseal).
-- Названия Telegram и Apple принадлежат соответствующим правообладателям. Проект не аффилирован с Telegram FZ-LLC или Apple Inc.
-
----
-
-<p align="center">
-  Powered by <a href="https://github.com/Flowseal/tg-ws-proxy">Flowseal/tg-ws-proxy</a>
-  and <a href="https://github.com/amurcanov/tg-ws-proxy-android">amurcanov/tg-ws-proxy-android</a>
-</p>
-
-<p align="center"><sub>Maintained by <a href="https://github.com/IMDelewer">IMDelewer</a></sub></p>
+<p align="center"><sub>Модификацию и исправление воркфлоу подготовил <a href="https://github.com">Adolfsmikler</a></sub></p>

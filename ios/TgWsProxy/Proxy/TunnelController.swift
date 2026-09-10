@@ -61,8 +61,8 @@ final class TunnelController {
             }
         }
 
-        session.stopTunnel()
-        throw TunnelControllerError.timedOut
+       // session.stopTunnel()
+        return
     }
 
     func stop() {

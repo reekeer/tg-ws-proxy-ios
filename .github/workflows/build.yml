@@ -1,0 +1,113 @@
+name: Build iOS IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Update Rust Core from Upstream
+        run: |
+          git submodule update --remote --merge || true
+
+      - name: Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.2.0'
+      - name: Patch GlassEffect and Inject Location Hack
+        run: |
+          # 1. Вырезаем баг эффекта стекла
+          sed -i '' 's/\.glassEffect.*//g' ios/TgWsProxy/UI/GlassTheme.swift
+          
+          # 2. Вшиваем в Info.plist фоновый режим локации и описания для запроса прав
+          plutil -insert UIBackgroundModes -array ios/TgWsProxy/Info.plist || true
+          plutil -insert UIBackgroundModes.0 -string "location" ios/TgWsProxy/Info.plist || true
+          plutil -insert NSLocationAlwaysAndWhenInUseUsageDescription -string "Keep proxy alive in background" ios/TgWsProxy/Info.plist || true
+          plutil -insert NSLocationWhenInUseUsageDescription -string "Keep proxy alive in background" ios/TgWsProxy/Info.plist || true
+          
+          # 3. ХАК: Автоматический поиск и внедрение генератора геолокации
+          cat << 'EOF' > patch_location.py
+          import os
+          import re
+
+          location_code = """
+          import CoreLocation
+
+          class BackgroundLocationManager: NSObject, CLLocationManagerDelegate {
+              static let shared = BackgroundLocationManager()
+              private let manager = CLLocationManager()
+              
+              override init() {
+                  super.init()
+                  manager.delegate = self
+                  manager.desiredAccuracy = kCLLocationAccuracyKilometer // Минимальная точность для экономии батареи
+                  manager.distanceFilter = 99999 // Реже обновлять
+                  manager.allowsBackgroundLocationUpdates = true
+                  manager.pausesLocationUpdatesAutomatically = false
+              }
+              
+              func start() {
+                  manager.requestAlwaysAuthorization()
+                  manager.startUpdatingLocation()
+              }
+          }
+          """
+
+          app_file = None
+          for root, dirs, files in os.walk("ios"):
+              for file in files:
+                  if file.endswith(".swift"):
+                      path = os.path.join(root, file)
+                      with open(path, "r", errors="ignore") as f:
+                          content = f.read()
+                          if "@main" in content and "some Scene" in content:
+                              app_file = path
+                              print(f"Found main app file at: {app_file}")
+                              break
+              if app_file:
+                  break
+
+          if not app_file:
+              print("ERROR: Could not find main SwiftUI app file!")
+              exit(1)
+
+          with open(app_file, "r") as f:
+              content = f.read()
+
+          # Встраиваем запуск менеджера локации
+          if "init()" in content:
+              content = re.sub(r'init\(\)\s*\{', 'init() {\n        BackgroundLocationManager.shared.start()\n', content, count=1)
+          else:
+              content = content.replace("var body: some Scene {", "init() {\n        BackgroundLocationManager.shared.start()\n    }\n    var body: some Scene {")
+
+          content = location_code + "\n" + content
+
+          with open(app_file, "w") as f:
+              f.write(content)
+          print("Location Hack successfully injected into Swift!")
+          EOF
+          
+          python3 patch_location.py
+      - name: Install Rust iOS Target
+        run: rustup target add aarch64-apple-ios
+
+      - name: Make script executable
+        run: chmod +x build.sh
+
+      - name: Run Build Script
+        env:
+          OTHER_SWIFT_FLAGS: "-strict-concurrency=minimal -suppress-warnings"
+        run: ./build.sh -p side -c la
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tg-ws-proxy-sideload
+          path: dist/*.ipa
