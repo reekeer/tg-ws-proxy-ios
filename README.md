@@ -28,6 +28,18 @@ Telegram → 127.0.0.1:1443 → Rust-ядро → WSS / Cloudflare → Telegram 
 
 ---
 
+## 📱 Как выглядит
+
+<p align="center">
+  <img src="docs/images/home-idle.png" width="31%" alt="Главный экран, прокси выключен">
+  <img src="docs/images/home-running.png" width="31%" alt="Главный экран, прокси работает">
+  <img src="docs/images/settings.png" width="31%" alt="Настройки">
+</p>
+
+<p align="center"><sub>Главный экран · прокси в работе со статистикой · настройки</sub></p>
+
+---
+
 ## ⚙️ Как это работает
 
 ### Ядро

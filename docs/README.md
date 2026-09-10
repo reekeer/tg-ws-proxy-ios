@@ -28,6 +28,18 @@ What leaves the device is ordinary HTTPS traffic to Cloudflare and `*.web.telegr
 
 ---
 
+## 📱 Screenshots
+
+<p align="center">
+  <img src="images/home-idle.png" width="31%" alt="Home screen, proxy stopped">
+  <img src="images/home-running.png" width="31%" alt="Home screen, proxy running">
+  <img src="images/settings.png" width="31%" alt="Settings">
+</p>
+
+<p align="center"><sub>Home screen · running proxy with live stats · settings</sub></p>
+
+---
+
 ## ⚙️ How it works
 
 ### The core
