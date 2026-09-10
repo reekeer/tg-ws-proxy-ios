@@ -36,8 +36,6 @@ struct ContentView: View {
         }
     }()
     @State private var menuOpen = ProcessInfo.processInfo.environment["TGWS_MENU"] == "1"
-    @State private var deepLinkMessage: String?
-    @State private var deepLinkError: String?
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -70,45 +68,10 @@ struct ContentView: View {
         .tint(.tgAccent)
         .task {
             LogStore.shared.startCapturing()
-            ProxyCommandCenter.consume(using: proxy)
-            if
-                let rawURL = ProcessInfo.processInfo.environment["TGWS_DEEPLINK"],
-                let url = URL(string: rawURL)
-            {
-                await handleDeepLink(url)
-            }
             let envStart = ProcessInfo.processInfo.environment["TGWS_AUTOSTART"] == "1"
             if (envStart || settings.autoStart), !proxy.isRunning {
                 proxy.start()
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .proxyCommand)) { _ in
-            ProxyCommandCenter.consume(using: proxy)
-        }
-        .onOpenURL { url in
-            Task { await handleDeepLink(url) }
-        }
-        .alert(
-            "TG WS Proxy",
-            isPresented: Binding(
-                get: { deepLinkMessage != nil },
-                set: { if !$0 { deepLinkMessage = nil } }
-            )
-        ) {
-            Button("OK") { deepLinkMessage = nil }
-        } message: {
-            Text(deepLinkMessage ?? "")
-        }
-        .alert(
-            "Ошибка deep link",
-            isPresented: Binding(
-                get: { deepLinkError != nil },
-                set: { if !$0 { deepLinkError = nil } }
-            )
-        ) {
-            Button("OK") { deepLinkError = nil }
-        } message: {
-            Text(deepLinkError ?? "")
         }
     }
 
@@ -132,30 +95,6 @@ struct ContentView: View {
         .animation(.snappy, value: proxy.isRunning)
     }
 
-    private func appTab(for destination: DeepLinkDestination) -> AppTab {
-        switch destination {
-        case .home: .home
-        case .settings: .settings
-        case .logs: .logs
-        case .info: .info
-        }
-    }
-
-    private func handleDeepLink(_ url: URL) async {
-        do {
-            let result = try await DeepLinkRouter.handle(
-                url,
-                proxy: proxy,
-                settings: settings
-            )
-            withAnimation(.spring(response: 0.32, dampingFraction: 0.78)) {
-                tab = appTab(for: result.destination)
-            }
-            deepLinkMessage = result.message
-        } catch {
-            deepLinkError = error.localizedDescription
-        }
-    }
 }
 
 private struct FloatingNavMenu: View {

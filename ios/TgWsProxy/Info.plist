@@ -18,17 +18,6 @@
     <string>1.0.0</string>
     <key>CFBundleVersion</key>
     <string>1</string>
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleURLName</key>
-            <string>com.delewer.tgwsproxy</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>tgwsproxy</string>
-            </array>
-        </dict>
-    </array>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>UIBackgroundModes</key>
@@ -39,8 +28,6 @@
     <string>Геопозиция нужна только для того, чтобы iOS не приостанавливала прокси в фоне. Координаты никуда не передаются.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>Разрешение «Всегда» нужно, чтобы прокси продолжал работать после сворачивания приложения. Координаты никуда не передаются.</string>
-    <key>NSSupportsLiveActivities</key>
-    <true/>
     <key>LSApplicationQueriesSchemes</key>
     <array>
         <string>tg</string>
