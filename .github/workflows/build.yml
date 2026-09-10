@@ -21,15 +21,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-apple-ios
 
-      - name: Check core for the host
+      - name: Check core
         run: cargo check --manifest-path src-wrapper/Cargo.toml --locked
 
-      - name: Check core for iOS
-        run: cargo check --manifest-path src-wrapper/Cargo.toml --locked --target aarch64-apple-ios
-
+      # Сборку под aarch64-apple-ios проверяет job app: xcodebuild собирает
+      # ядро через build-rust-ios.sh, для этого нужен iOS SDK и macOS-раннер.
       - name: FFI smoke test
         run: ./scripts/run-ffi-smoke.sh
 

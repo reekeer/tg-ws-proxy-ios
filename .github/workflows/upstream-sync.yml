@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
+    runs-on: macos-15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,6 +33,7 @@ jobs:
       - name: Check Rust core for the host
         run: cargo check --manifest-path src-wrapper/Cargo.toml --locked
 
+      # Требует xcrun и iOS SDK, поэтому job живёт на macOS-раннере.
       - name: Check Rust core for iOS
         run: cargo check --manifest-path src-wrapper/Cargo.toml --locked --target aarch64-apple-ios
 
