@@ -47,6 +47,7 @@ struct CardModifier: ViewModifier {
 
     @ViewBuilder
     private func surface(content: Content, shape: RoundedRectangle) -> some View {
+#if compiler(>=6.2)
         if #available(iOS 26.0, *), liquidGlass {
             content
                 .padding(padding)
@@ -56,6 +57,11 @@ struct CardModifier: ViewModifier {
                 .padding(padding)
                 .background(.ultraThinMaterial, in: shape)
         }
+#else
+        content
+            .padding(padding)
+            .background(.ultraThinMaterial, in: shape)
+#endif
     }
 }
 
@@ -74,6 +80,7 @@ private struct GlassBarModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
+#if compiler(>=6.2)
         if #available(iOS 26.0, *), liquidGlass {
             content.glassEffect(.regular, in: Capsule())
         } else {
@@ -81,6 +88,11 @@ private struct GlassBarModifier: ViewModifier {
                 .background(.ultraThinMaterial, in: Capsule())
                 .overlay(Capsule().strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5))
         }
+#else
+        content
+            .background(.ultraThinMaterial, in: Capsule())
+            .overlay(Capsule().strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5))
+#endif
     }
 }
 
