@@ -19,16 +19,8 @@ struct AppBackground: View {
     var active: Bool = false
 
     var body: some View {
-        ZStack {
-            Color(.systemGroupedBackground)
-            Circle()
-                .fill((active ? Color.tgConnected : Color.tgAccent).opacity(0.16))
-                .frame(width: 320, height: 320)
-                .blur(radius: 120)
-                .offset(x: 0, y: -360)
-                .animation(.easeInOut(duration: 0.6), value: active)
-        }
-        .ignoresSafeArea()
+        Color(.systemGroupedBackground)
+            .ignoresSafeArea()
     }
 }
 

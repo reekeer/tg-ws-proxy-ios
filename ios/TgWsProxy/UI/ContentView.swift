@@ -176,13 +176,14 @@ private struct HomeView: View {
         ScrollView {
             VStack(spacing: 16) {
                 hero
+                if let warning = proxy.backgroundWarning {
+                    backgroundWarning(warning)
+                }
                 statusCard
                 if proxy.isRunning {
                     TrafficChartCard(samples: proxy.traffic)
                 }
                 metricsCard
-                transportCard
-                backgroundNote
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
@@ -196,14 +197,8 @@ private struct HomeView: View {
                 Haptics.impact()
                 proxy.toggle()
             }
-            VStack(spacing: 4) {
-                Text(proxy.statusTitle)
-                    .font(.title3.weight(.semibold))
-                Text(proxy.statusDetail)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-            }
+            Text(proxy.statusTitle)
+                .font(.title3.weight(.semibold))
             connectButton
                 .padding(.top, 2)
         }
@@ -231,9 +226,6 @@ private struct HomeView: View {
         ) {
             MetricTile(title: "Получено", value: proxy.stats.downloaded, icon: "arrow.down")
             MetricTile(title: "Отправлено", value: proxy.stats.uploaded, icon: "arrow.up")
-            MetricTile(title: "Активные", value: proxy.stats.active, icon: "link")
-            MetricTile(title: "WebSocket", value: proxy.stats.webSockets, icon: "bolt.horizontal")
-            MetricTile(title: "Пул", value: proxy.stats.pool, icon: "square.stack.3d.up")
             MetricTile(
                 title: "Ошибки",
                 value: proxy.stats.errors,
@@ -244,18 +236,6 @@ private struct HomeView: View {
         .card(padding: 10)
     }
 
-    private var transportCard: some View {
-        HStack(spacing: 0) {
-            CompactCounter(title: "Соединения", value: proxy.stats.total)
-            Divider().frame(height: 34)
-            CompactCounter(title: "Cloudflare", value: proxy.stats.cloudflare)
-            Divider().frame(height: 34)
-            CompactCounter(title: "TCP fallback", value: proxy.stats.tcpFallback)
-            Divider().frame(height: 34)
-            CompactCounter(title: "Размер пула", value: "\(proxy.configuration.poolSize)")
-        }
-        .card(padding: 12)
-    }
 
     private var connectButton: some View {
         Button {
@@ -279,12 +259,27 @@ private struct HomeView: View {
         .padding(.horizontal, 10)
     }
 
-    private var backgroundNote: some View {
-        Text(proxy.backgroundNote)
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 4)
+    private func backgroundWarning(_ text: String) -> some View {
+        Button {
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                openURL(url)
+            }
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                Text(text)
+                    .font(.footnote)
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.leading)
+                Spacer(minLength: 4)
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .card(padding: 12)
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -314,23 +309,6 @@ private struct MetricTile: View {
     }
 }
 
-private struct CompactCounter: View {
-    let title: String
-    let value: String
-
-    var body: some View {
-        VStack(spacing: 3) {
-            Text(value)
-                .font(.caption.monospacedDigit().weight(.semibold))
-            Text(verbatim: title.tgLoc)
-                .font(.system(size: 9))
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
-        }
-        .frame(maxWidth: .infinity)
-    }
-}
 
 private struct TrafficChartCard: View {
     let samples: [TrafficSample]
@@ -416,27 +394,12 @@ private struct PowerButton: View {
     let isBusy: Bool
     let action: () -> Void
 
-    @State private var ripple = false
-
     var body: some View {
         Button(action: action) {
             ZStack {
-                if isOn {
-                    Circle()
-                        .stroke(Color.tgConnected.opacity(0.5), lineWidth: 2)
-                        .frame(width: 150, height: 150)
-                        .scaleEffect(ripple ? 1.25 : 1.0)
-                        .opacity(ripple ? 0 : 0.8)
-                }
-                Circle()
-                    .stroke((isOn ? Color.tgConnected : Color.secondary).opacity(0.22), lineWidth: 2)
-                    .frame(width: 150, height: 150)
-
                 Circle()
                     .fill(isOn ? Color.tgConnected : Color.tgAccent)
                     .frame(width: 120, height: 120)
-                    .shadow(color: (isOn ? Color.tgConnected : Color.tgAccent).opacity(0.4),
-                            radius: isOn ? 18 : 0)
 
                 if isBusy {
                     ProgressView().controlSize(.large).tint(.white)
@@ -450,15 +413,5 @@ private struct PowerButton: View {
         .buttonStyle(.plain)
         .disabled(isBusy)
         .animation(.easeInOut(duration: 0.25), value: isOn)
-        .onChange(of: isOn) { _, on in updateRipple(on) }
-        .onAppear { updateRipple(isOn) }
-    }
-
-    private func updateRipple(_ on: Bool) {
-        ripple = false
-        guard on else { return }
-        withAnimation(.easeOut(duration: 1.4).repeatForever(autoreverses: false)) {
-            ripple = true
-        }
     }
 }

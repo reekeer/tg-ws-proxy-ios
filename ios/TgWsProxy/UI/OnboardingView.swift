@@ -20,24 +20,7 @@ struct OnboardingView: View {
 
                     Text("TG WS Proxy".tgLoc)
                         .font(.largeTitle.bold())
-                    Text("Локальный MTProto-прокси для Telegram на быстром Rust-ядре".tgLoc)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
                 }
-
-                VStack(spacing: 14) {
-                    FeatureRow(icon: "bolt.fill", title: "Один тап",
-                               text: "Запусти прокси и открой его в Telegram одной кнопкой.")
-                    FeatureRow(icon: "lock.shield.fill", title: "Приватность",
-                               text: "Трафик идёт через WSS/Cloudflare к дата-центрам Telegram.")
-                    FeatureRow(icon: "arrow.triangle.2.circlepath", title: "Всегда свежее ядро",
-                               text: "Rust-ядро синхронизируется с upstream.")
-                }
-                .padding(.horizontal, 8)
-                .card(padding: 18)
-                .padding(.horizontal, 16)
 
                 Spacer()
 
@@ -60,22 +43,3 @@ struct OnboardingView: View {
     }
 }
 
-private struct FeatureRow: View {
-    let icon: String
-    let title: String
-    let text: String
-
-    var body: some View {
-        HStack(spacing: 14) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundStyle(Color.tgAccent)
-                .frame(width: 34)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: title.tgLoc).font(.callout.weight(.semibold))
-                Text(verbatim: text.tgLoc).font(.caption).foregroundStyle(.secondary)
-            }
-            Spacer(minLength: 0)
-        }
-    }
-}
