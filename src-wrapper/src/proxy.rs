@@ -15,6 +15,10 @@ use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::Mutex;
 use tokio_util::sync::CancellationToken;
 
+// ---------------------------------------------------------------------------
+// Target resolution
+// ---------------------------------------------------------------------------
+
 pub fn resolve_configured_target(dc: i32, is_media: bool) -> Option<String> {
     let map = DC_OPT.read();
     if is_media {
@@ -72,6 +76,10 @@ pub fn is_media_int(b: bool) -> i32 {
         0
     }
 }
+
+// ---------------------------------------------------------------------------
+// WsPool
+// ---------------------------------------------------------------------------
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DcSlot {
@@ -276,6 +284,10 @@ fn is_pool_entry_usable(e: &PoolEntry, now: i64) -> bool {
     true
 }
 
+// ---------------------------------------------------------------------------
+// HTTP transport detection
+// ---------------------------------------------------------------------------
+
 pub fn is_http_transport(data: &[u8]) -> bool {
     if data.len() < 4 {
         return false;
@@ -285,6 +297,10 @@ pub fn is_http_transport(data: &[u8]) -> bool {
         || &data[..4] == b"HEAD"
         || (data.len() >= 7 && &data[..7] == b"OPTIONS")
 }
+
+// ---------------------------------------------------------------------------
+// Bridge WS
+// ---------------------------------------------------------------------------
 
 pub async fn bridge_ws(
     conn: TcpStream,
@@ -307,6 +323,7 @@ pub async fn bridge_ws(
 
     let (mut conn_read, mut conn_write) = conn.into_split();
 
+    // ping keepalive
     let ws_ping = ws.clone();
     let la_ping = last_activity.clone();
     let cancel_ping = cancel.clone();
@@ -331,6 +348,7 @@ pub async fn bridge_ws(
         }
     });
 
+    // up: client -> ws
     let ws_up = ws.clone();
     let la_up = last_activity.clone();
     let cancel_up = cancel.clone();
@@ -345,7 +363,7 @@ pub async fn bridge_ws(
             };
             let n = match read_res {
                 Ok(Ok(0)) => {
-
+                    // EOF: flush splitter tail
                     if let Some(sp) = splitter.as_mut() {
                         let tail = sp.flush();
                         if !tail.is_empty() {
@@ -363,7 +381,7 @@ pub async fn bridge_ws(
                 }
                 Ok(Ok(n)) => n,
                 Ok(Err(_)) => break,
-                Err(_) => break,
+                Err(_) => break, // read timeout
             };
 
             let chunk = &mut buf[..n];
@@ -394,6 +412,7 @@ pub async fn bridge_ws(
         cancel_up.notify_waiters();
     });
 
+    // down: ws -> client
     let ws_down = ws.clone();
     let la_down = last_activity.clone();
     let cancel_down = cancel.clone();
@@ -429,6 +448,10 @@ pub async fn bridge_ws(
 
     ws.close().await;
 }
+
+// ---------------------------------------------------------------------------
+// Bridge TCP
+// ---------------------------------------------------------------------------
 
 pub async fn bridge_tcp(
     mut client: TcpStream,
@@ -512,6 +535,10 @@ pub async fn bridge_tcp(
     let _ = (clt_dec, clt_enc, tg_enc, tg_dec);
 }
 
+// ---------------------------------------------------------------------------
+// TCP fallback
+// ---------------------------------------------------------------------------
+
 pub async fn tcp_fallback(
     client: TcpStream,
     dst: &str,
@@ -557,6 +584,10 @@ pub async fn tcp_fallback(
     true
 }
 
+// ---------------------------------------------------------------------------
+// Cfproxy fallback
+// ---------------------------------------------------------------------------
+
 async fn try_cfproxy_base_domain(dc: i32, base_domain: &str) -> (Option<RawWebSocket>, String) {
     let base_domain = normalize_cf_domain(base_domain);
     if base_domain.is_empty() {
@@ -581,7 +612,8 @@ async fn try_cfproxy_base_domain(dc: i32, base_domain: &str) -> (Option<RawWebSo
 
     let (ws, resolved_ip, err) = cf_connect_domain(&domain, "/apiws", 5.0).await;
     if let Some(e) = err {
-
+        // ВАЖНО (как в Go): cooldown ставим ТОЛЬКО при HTTP 429, иначе
+        // любой reset/timeout выжигал бы домены и плодил лавину cooldown.
         if is_http_status_error(&e, 429) {
             mark_cfproxy_429_cooldown(&base_domain, &e);
         }
@@ -605,6 +637,9 @@ async fn try_cfproxy_base_domain(dc: i32, base_domain: &str) -> (Option<RawWebSo
     (ws, base_domain)
 }
 
+// Только устанавливает WS-соединение через CF, НЕ трогая conn.
+// Возвращает (ws, chosen_domain). Это позволяет при провале CF
+// переиспользовать conn для TCP fallback (семантика Go сохранена).
 async fn cfproxy_acquire_ws(
     dc: i32,
     is_media: bool,
@@ -687,6 +722,11 @@ async fn cfproxy_acquire_ws(
     }
 }
 
+// ---------------------------------------------------------------------------
+// doFallback — теперь CF не "съедает" conn при провале; при неуспехе CF
+// тот же conn уходит в TCP fallback (1-в-1 как Go doFallback).
+// ---------------------------------------------------------------------------
+
 pub async fn do_fallback(
     conn: TcpStream,
     relay_init: &[u8],
@@ -700,7 +740,7 @@ pub async fn do_fallback(
     tg_dec: &TrackedStream,
     cancel_token: CancellationToken,
 ) -> bool {
-
+    // Clone streams (как Go Clone())
     let clt_dec = clt_dec.clone_state();
     let clt_enc = clt_enc.clone_state();
     let tg_enc = tg_enc.clone_state();
@@ -710,7 +750,7 @@ pub async fn do_fallback(
     let use_cf = CFPROXY_ENABLED.load(Ordering::Relaxed);
 
     if use_cf {
-
+        // Сначала добываем WS через CF, conn не трогаем.
         if let Some((ws, chosen_domain)) =
             cfproxy_acquire_ws(dc, is_media, &cancel_token).await
         {
@@ -719,7 +759,7 @@ pub async fn do_fallback(
 
             if ws.send(relay_init).await.is_err() {
                 ws.close().await;
-
+                // CF умер сразу после хендшейка — пробуем TCP на том же conn.
                 if !fallback_dst.is_empty() {
                     return tcp_fallback(
                         conn,
@@ -758,7 +798,7 @@ pub async fn do_fallback(
             .await;
             return true;
         }
-
+        // CF не дал ws — conn НЕ тронут, идём в TCP fallback ниже.
     }
 
     if !fallback_dst.is_empty() {
@@ -781,6 +821,10 @@ pub async fn do_fallback(
 
     false
 }
+
+// ---------------------------------------------------------------------------
+// Client handler (dd-only)
+// ---------------------------------------------------------------------------
 
 pub async fn handle_client(pool: Arc<WsPool>, mut conn: TcpStream, cancel_token: CancellationToken) {
     STATS.connections_total.fetch_add(1, Ordering::Relaxed);
@@ -806,6 +850,7 @@ pub async fn handle_client(pool: Arc<WsPool>, mut conn: TcpStream, cancel_token:
     let current_secret = PROXY_SECRET.read().clone();
     let secret_bytes = hex::decode(&current_secret).unwrap_or_default();
 
+    // 64-байтный handshake
     let mut handshake = [0u8; 64];
     match tokio::time::timeout(Duration::from_secs(10), conn.read_exact(&mut handshake)).await {
         Ok(Ok(_)) => {}
@@ -854,6 +899,7 @@ pub async fn handle_client(pool: Arc<WsPool>, mut conn: TcpStream, cancel_token:
     hash_enc.update(&secret_bytes);
     let clt_encryptor = new_aes_ctr(&hash_enc.finalize(), &clt_enc_prekey_and_iv[32..]);
 
+    // relayInit генерация (1-в-1 c Go)
     let mut relay_init = [0u8; 64];
     loop {
         rand::thread_rng().fill_bytes(&mut relay_init);
@@ -978,6 +1024,7 @@ pub async fn handle_client(pool: Arc<WsPool>, mut conn: TcpStream, cancel_token:
         return;
     }
 
+    // send direct init
     let mut ws = ws_opt.take().unwrap();
     let mut send_ok = ws.send(&relay_init).await.is_ok();
     if send_ok {
@@ -1066,6 +1113,7 @@ pub async fn handle_client(pool: Arc<WsPool>, mut conn: TcpStream, cancel_token:
     .await;
 }
 
+// connectDirectWS
 pub async fn connect_direct_ws(
     target: &str,
     domains: &[String],
@@ -1096,6 +1144,10 @@ pub async fn connect_direct_ws(
     }
     (None, ws_failed_redirect, all_redirects)
 }
+
+// ---------------------------------------------------------------------------
+// Server
+// ---------------------------------------------------------------------------
 
 pub async fn run_proxy(
     pool: Arc<WsPool>,

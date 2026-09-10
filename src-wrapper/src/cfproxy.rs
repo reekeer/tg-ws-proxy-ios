@@ -9,6 +9,10 @@ use tokio::sync::Semaphore;
 use once_cell::sync::Lazy;
 static CFPROXY_SEM: Lazy<Semaphore> = Lazy::new(|| Semaphore::new(CFPROXY_GLOBAL_PARALLEL));
 
+// ---------------------------------------------------------------------------
+// Domain decoding
+// ---------------------------------------------------------------------------
+
 pub fn decode_cf_domain(s: &str) -> String {
     if !s.ends_with(".com") {
         return s.to_string();
@@ -76,6 +80,10 @@ pub fn merge_cfproxy_domains(lists: &[Vec<String>]) -> Vec<String> {
     merged
 }
 
+// ---------------------------------------------------------------------------
+// 429 cooldown logic
+// ---------------------------------------------------------------------------
+
 pub fn clear_cfproxy_429_cooldowns() {
     CFPROXY_429.write().clear();
 }
@@ -102,7 +110,7 @@ pub fn retry_after_delay(err: &WsError) -> Duration {
             return Duration::from_secs(seconds as u64);
         }
     }
-
+    // http date parse (best-effort): пропускаем, как маловероятный кейс
     Duration::ZERO
 }
 
@@ -189,6 +197,10 @@ pub async fn acquire_cfproxy_attempt_slot() -> Option<tokio::sync::SemaphorePerm
     CFPROXY_SEM.acquire().await.ok()
 }
 
+// ---------------------------------------------------------------------------
+// Cache files
+// ---------------------------------------------------------------------------
+
 fn cfproxy_cache_path() -> Option<PathBuf> {
     let dir = CFPROXY.read().cache_dir.trim().to_string();
     if dir.is_empty() {
@@ -196,6 +208,8 @@ fn cfproxy_cache_path() -> Option<PathBuf> {
     }
     Some(PathBuf::from(dir).join(CFPROXY_CACHE_FILE_NAME))
 }
+
+// Активный домен больше не сохраняется в отдельный файл. Балансер работает в памяти.
 
 fn load_cfproxy_domains_from_cache() -> Vec<String> {
     let path = match cfproxy_cache_path() {
@@ -209,6 +223,8 @@ fn load_cfproxy_domains_from_cache() -> Vec<String> {
     let list: Vec<String> = data.split('\n').map(|s| s.to_string()).collect();
     merge_cfproxy_domains(&[list])
 }
+
+
 
 fn save_cfproxy_domains_to_cache(domains: &[String]) {
     let path = match cfproxy_cache_path() {
@@ -230,6 +246,8 @@ fn save_cfproxy_domains_to_cache(domains: &[String]) {
     }
 }
 
+
+
 fn should_refresh_cfproxy_domains() -> bool {
     let path = match cfproxy_cache_path() {
         Some(p) => p,
@@ -248,6 +266,8 @@ fn should_refresh_cfproxy_domains() -> bool {
         Err(_) => true,
     }
 }
+
+
 
 pub fn init_cfproxy_domains() {
     let defaults = default_cfproxy_domains();
@@ -356,6 +376,10 @@ pub async fn try_refresh_cfproxy_domains() -> bool {
     false
 }
 
+// ---------------------------------------------------------------------------
+// DNS over HTTPS (DoH) resolve
+// ---------------------------------------------------------------------------
+
 #[derive(Deserialize)]
 struct DohAnswer {
     #[serde(rename = "data")]
@@ -439,6 +463,7 @@ pub async fn resolve_doh(domain: &str) -> Option<String> {
         }));
     }
 
+    // UDP-резолв через системный resolver как дополнительный кандидат
     {
         let domain2 = domain.to_string();
         let tx = tx.clone();
@@ -461,7 +486,7 @@ pub async fn resolve_doh(domain: &str) -> Option<String> {
         }));
     }
 
-    drop(tx);
+    drop(tx); // Чтобы rx.recv() завершился, когда все таски завершатся
 
     let deadline = tokio::time::sleep(Duration::from_millis(1500));
     tokio::pin!(deadline);
@@ -478,13 +503,14 @@ pub async fn resolve_doh(domain: &str) -> Option<String> {
                         final_ip = Some(ip);
                         break;
                     }
-                    Some(None) => {}
-                    None => break,
+                    Some(None) => {} // Таска ничего не нашла
+                    None => break,   // Все таски завершились
                 }
             }
         }
     }
 
+    // Отменяем все незавершенные фоновые таски (исправление утечки)
     for t in tasks {
         t.abort();
     }
@@ -495,9 +521,13 @@ pub async fn resolve_doh(domain: &str) -> Option<String> {
             (ip.clone(), Instant::now() + Duration::from_secs(300)),
         );
     }
-
+    
     final_ip
 }
+
+// ---------------------------------------------------------------------------
+// cfConnectDomain
+// ---------------------------------------------------------------------------
 
 fn new_timed_attempt_timeout(base: Duration, phase: Duration) -> Duration {
     let mut eff = base;
@@ -558,3 +588,7 @@ pub fn log_cf_conn_error(msg: &str, err: &WsError) {
     }
 }
 
+// активный домен set/save
+pub fn set_active_domain_and_save(_chosen: &str) {
+    // Больше не используется для файлов. Балансер обновляется внутри proxy.rs
+}

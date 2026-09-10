@@ -4,6 +4,11 @@ use byteorder::{BigEndian, ByteOrder, LittleEndian};
 
 type Aes256Ctr = ctr::Ctr64BE<aes::Aes256>;
 
+// ---------------------------------------------------------------------------
+// TrackedStream — эмулирует Go cipher.Stream с поддержкой Clone() через
+// "промотку" keystream на processed байт.
+// ---------------------------------------------------------------------------
+
 pub struct TrackedStream {
     key: Vec<u8>,
     iv: Vec<u8>,
@@ -22,6 +27,7 @@ impl TrackedStream {
         }
     }
 
+    // XOR in place (dst == src в нашем использовании)
     pub fn xor(&mut self, data: &mut [u8]) {
         self.stream.apply_keystream(data);
         self.processed += data.len() as u64;
@@ -48,6 +54,10 @@ impl TrackedStream {
 pub fn new_aes_ctr(key: &[u8], iv: &[u8]) -> TrackedStream {
     TrackedStream::new(key, iv)
 }
+
+// ---------------------------------------------------------------------------
+// MTProto Splitter
+// ---------------------------------------------------------------------------
 
 pub const PROTO_ABRIDGED: i32 = 0;
 pub const PROTO_INTERMEDIATE: i32 = 1;
@@ -189,6 +199,10 @@ impl MsgSplitter {
         }
     }
 }
+
+// ---------------------------------------------------------------------------
+// XOR mask (websocket frame masking) — оптимизированный вариант
+// ---------------------------------------------------------------------------
 
 pub fn xor_mask_in_place(data: &mut [u8], mask: &[u8]) {
     let n = data.len();

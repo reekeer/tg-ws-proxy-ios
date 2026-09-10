@@ -30,9 +30,12 @@ impl Balancer {
 
         self.domains = domains_list.to_vec();
         let mut rng = rand::thread_rng();
-        let new_set: std::collections::HashSet<&str> = self.domains.iter().map(|s| s.as_str()).collect();
 
-        self.dc_to_domain.retain(|_, domain| new_set.contains(domain.as_str()));
+        let new_set: std::collections::HashSet<&str> =
+            self.domains.iter().map(|s| s.as_str()).collect();
+
+        self.dc_to_domain
+            .retain(|_, domain| new_set.contains(domain.as_str()));
         for dc_id in [1, 2, 3, 4, 5, 203] {
             if self.dc_to_domain.contains_key(&dc_id) {
                 continue;
@@ -54,7 +57,7 @@ impl Balancer {
     pub fn get_domains_for_dc(&self, dc_id: i32) -> Vec<String> {
         let mut result = Vec::new();
         let current_domain = self.dc_to_domain.get(&dc_id).cloned();
-
+        
         if let Some(ref d) = current_domain {
             result.push(d.clone());
         }
@@ -68,7 +71,7 @@ impl Balancer {
                 result.push(d);
             }
         }
-
+        
         result
     }
 }

@@ -17,6 +17,7 @@ use std::sync::Arc;
 use tokio::runtime::Runtime;
 use tokio_util::sync::CancellationToken;
 
+// Глобальный рантайм — никогда не дропается
 static RUNTIME: OnceCell<Runtime> = OnceCell::new();
 
 struct ProxyState {
@@ -33,7 +34,7 @@ fn state_cell() -> &'static Mutex<Option<ProxyState>> {
 
 fn runtime() -> &'static Runtime {
     RUNTIME.get_or_init(|| {
-
+        // Многопоточный рантайм, кол-во воркеров адекватно мобиле
         tokio::runtime::Builder::new_multi_thread()
             .worker_threads(4)
             .thread_name("tgwsproxy-rt")
@@ -50,6 +51,12 @@ fn cstr_to_string(p: *const c_char) -> String {
     unsafe { CStr::from_ptr(p).to_string_lossy().into_owned() }
 }
 
+// ---------------------------------------------------------------------------
+// Exports
+// ---------------------------------------------------------------------------
+
+/// # Safety
+/// Указатели должны быть валидными C-строками (или null).
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn StartProxy(
     c_host: *const c_char,
@@ -88,6 +95,7 @@ pub unsafe extern "C" fn StartProxy(
     let cancel_tasks = CancellationToken::new();
     let pool = Arc::new(WsPool::new(cancel_tasks.clone()));
 
+    // Канал готовности: ждём успешного bind перед возвратом
     let (tx, rx) = std::sync::mpsc::channel::<Result<(), String>>();
 
     let pool_task = pool.clone();
@@ -96,7 +104,7 @@ pub unsafe extern "C" fn StartProxy(
     let cancel_root = cancel_tasks.clone();
 
     let handle = rt.spawn(async move {
-
+        // Предварительный bind для сигнала готовности
         let addr = format!("{}:{}", host_task, go_port);
         match tokio::net::TcpListener::bind(&addr).await {
             Ok(listener) => {
@@ -113,6 +121,7 @@ pub unsafe extern "C" fn StartProxy(
         }
     });
 
+    // Ждём результат bind
     match rx.recv() {
         Ok(Ok(())) => {}
         Ok(Err(_)) => {
@@ -144,6 +153,7 @@ pub extern "C" fn StopProxy() -> c_int {
         None => return -1,
     };
 
+    // graceful shutdown — НЕ дропаем рантайм
     linfo!("StopProxy: cancelling all tasks");
     state.cancel_tasks.cancel();
 
@@ -178,12 +188,16 @@ pub extern "C" fn SetPoolSize(size: c_int) {
     POOL_SIZE.store(n, Ordering::Relaxed);
 }
 
+/// # Safety
+/// `c_cache_dir` — валидная C-строка или null.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn SetCfProxyCacheDir(c_cache_dir: *const c_char) {
     let dir = cstr_to_string(c_cache_dir);
     CFPROXY.write().cache_dir = dir.trim().to_string();
 }
 
+/// # Safety
+/// `c_user_domain` — валидная C-строка или null.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn SetCfProxyConfig(
     enabled: c_int,
@@ -200,6 +214,8 @@ pub unsafe extern "C" fn SetCfProxyConfig(
     }
 }
 
+/// # Safety
+/// `c_secret` — валидная C-строка или null.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn SetSecret(c_secret: *const c_char) {
     let s = cstr_to_string(c_secret);
@@ -242,6 +258,8 @@ pub extern "C" fn RefreshCfProxyDomains() -> c_int {
     }
 }
 
+/// # Safety
+/// `p` должен быть указателем, ранее возвращённым из этой библиотеки.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn FreeString(p: *mut c_char) {
     if p.is_null() {

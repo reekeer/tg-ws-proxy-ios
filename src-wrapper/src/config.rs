@@ -4,6 +4,10 @@ use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, AtomicI32, AtomicI64, Ordering};
 use std::time::{Duration, Instant};
 
+// ---------------------------------------------------------------------------
+// Constants & Configuration
+// ---------------------------------------------------------------------------
+
 pub const DEFAULT_PORT: u16 = 1443;
 pub const TCP_NODELAY: bool = true;
 pub const DEFAULT_RECV_BUF: usize = 256 * 1024;
@@ -24,6 +28,7 @@ pub const WS_POOL_REUSE_MAX_AGE: f64 = 120.0;
 pub const WS_POOL_CONNECT_TIMEOUT: f64 = 8.0;
 
 pub const CFPROXY_CACHE_FILE_NAME: &str = "cfproxy-domains-cache.txt";
+pub const CFPROXY_ACTIVE_FILE_NAME: &str = "cfproxy-active-domain.txt";
 pub const CFPROXY_REFRESH_INTERVAL: Duration = Duration::from_secs(12 * 3600);
 pub const CFPROXY_DIAL_PHASE_TIMEOUT: Duration = Duration::from_secs(4);
 pub const CFPROXY_FALLBACK_PARALLEL: usize = 2;
@@ -48,6 +53,7 @@ impl Default for Cfproxy429State {
     }
 }
 
+// Cloudflare proxy config
 pub static CFPROXY_ENABLED: AtomicBool = AtomicBool::new(true);
 
 pub struct CfproxyConfig {
@@ -72,6 +78,7 @@ pub static CFPROXY_429: Lazy<RwLock<HashMap<String, Cfproxy429State>>> =
 pub const CFPROXY_DOMAINS_URL: &str =
     "https://raw.githubusercontent.com/Flowseal/tg-ws-proxy/main/.github/cfproxy-domains.txt";
 
+// MTProto proxy secret
 pub static PROXY_SECRET: Lazy<RwLock<String>> =
     Lazy::new(|| RwLock::new("00000000000000000000000000000000".to_string()));
 
@@ -93,6 +100,7 @@ pub static CFPROXY_ENC: &[&str] = &[
     "xwuwoqbm.com",
 ];
 
+// DC default IPs
 pub static DC_DEFAULT_IPS: Lazy<HashMap<i32, &'static str>> = Lazy::new(|| {
     let mut m = HashMap::new();
     m.insert(1, "149.154.175.50");
@@ -104,6 +112,7 @@ pub static DC_DEFAULT_IPS: Lazy<HashMap<i32, &'static str>> = Lazy::new(|| {
     m
 });
 
+// Telegram protocols & DC mapping
 pub fn valid_proto(p: u32) -> bool {
     matches!(p, 0xEFEFEFEF | 0xEEEEEEEE | 0xDDDDDDDD)
 }
@@ -114,6 +123,7 @@ pub static DC_OVERRIDES: Lazy<HashMap<i32, i32>> = Lazy::new(|| {
     m
 });
 
+// Global state
 pub static DC_OPT: Lazy<RwLock<HashMap<i32, String>>> = Lazy::new(|| RwLock::new(HashMap::new()));
 pub static WS_BLACKLIST: Lazy<RwLock<HashMap<(i32, i32), bool>>> =
     Lazy::new(|| RwLock::new(HashMap::new()));
@@ -121,6 +131,10 @@ pub static DC_FAIL_UNTIL: Lazy<RwLock<HashMap<(i32, i32), f64>>> =
     Lazy::new(|| RwLock::new(HashMap::new()));
 
 pub static ZERO64: [u8; 64] = [0u8; 64];
+
+// ---------------------------------------------------------------------------
+// Stats
+// ---------------------------------------------------------------------------
 
 #[derive(Default)]
 pub struct Stats {
@@ -215,6 +229,10 @@ pub fn human_bytes(n: i64) -> String {
     }
     format!("{:.1}TB", f)
 }
+
+// ---------------------------------------------------------------------------
+// Logger (Android log + stderr, 1-в-1 префиксы)
+// ---------------------------------------------------------------------------
 
 #[cfg(target_os = "android")]
 fn android_log_line(line: &str) {

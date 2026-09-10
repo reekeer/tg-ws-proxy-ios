@@ -17,11 +17,19 @@ use tokio::net::TcpStream;
 use tokio_rustls::client::TlsStream;
 use tokio_rustls::TlsConnector;
 
+// ---------------------------------------------------------------------------
+// WS opcodes
+// ---------------------------------------------------------------------------
+
 pub const OP_TEXT: u8 = 0x1;
 pub const OP_BINARY: u8 = 0x2;
 pub const OP_CLOSE: u8 = 0x8;
 pub const OP_PING: u8 = 0x9;
 pub const OP_PONG: u8 = 0xA;
+
+// ---------------------------------------------------------------------------
+// TLS config: InsecureSkipVerify + session cache (как в Go)
+// ---------------------------------------------------------------------------
 
 #[derive(Debug)]
 struct NoVerify;
@@ -74,6 +82,7 @@ impl ServerCertVerifier for NoVerify {
 
 use once_cell::sync::Lazy;
 
+// Глобальный TLS-конфиг с session resumption cache (аналог tls.NewLRUClientSessionCache(100))
 static TLS_CONFIG: Lazy<Arc<ClientConfig>> = Lazy::new(|| {
     let mut cfg = ClientConfig::builder()
         .dangerous()
@@ -82,6 +91,10 @@ static TLS_CONFIG: Lazy<Arc<ClientConfig>> = Lazy::new(|| {
     cfg.resumption = rustls::client::Resumption::in_memory_sessions(100);
     Arc::new(cfg)
 });
+
+// ---------------------------------------------------------------------------
+// WsHandshakeError
+// ---------------------------------------------------------------------------
 
 #[derive(Debug, Clone)]
 pub struct WsHandshakeError {
@@ -149,6 +162,10 @@ impl From<std::io::Error> for WsError {
         WsError::Io(e)
     }
 }
+
+// ---------------------------------------------------------------------------
+// RawWebSocket
+// ---------------------------------------------------------------------------
 
 pub struct RawWebSocket {
     reader: tokio::sync::Mutex<BufReader<tokio::io::ReadHalf<TlsStream<TcpStream>>>>,
@@ -219,6 +236,7 @@ impl RawWebSocket {
         }
     }
 
+    // Recv обрабатывает контрольные фреймы (как Go Recv)
     pub async fn recv(&self) -> Result<Vec<u8>, WsError> {
         while !self.is_closed() {
             let (opcode, payload) = match self.read_frame().await {
@@ -264,11 +282,13 @@ impl RawWebSocket {
         }
         let frame = build_frame(OP_CLOSE, &[], true);
         let _ = self.write_frame(&frame, WS_CONTROL_TIMEOUT).await;
-
+        // Skipping writer.shutdown().await to avoid hanging on dead connections
     }
 
-
-
+    // recv с дедлайном чтения (для bridge).
+    // ВАЖНО: таймаут оборачивает только чтение ОДНОГО фрейма целиком под
+    // удержанием lock, чтобы НЕ дропать future посреди read_exact (иначе
+    // теряются уже прочитанные байты BufReader → рассинхрон потока).
     pub async fn recv_with_timeout(&self, dur: Duration) -> Result<Vec<u8>, WsError> {
         loop {
             if self.is_closed() {
@@ -354,6 +374,8 @@ impl RawWebSocket {
     }
 }
 
+// Чтение одного фрейма из уже захваченного reader (без повторного lock).
+// Используется recv_with_timeout, чтобы держать lock на всё время чтения фрейма.
 async fn read_frame_locked(
     reader: &mut BufReader<tokio::io::ReadHalf<TlsStream<TcpStream>>>,
 ) -> Result<(u8, Vec<u8>), WsError> {
@@ -392,6 +414,10 @@ async fn read_frame_locked(
     }
     Ok((opcode, payload))
 }
+
+// ---------------------------------------------------------------------------
+// Frame builder (mask=true всегда для клиента)
+// ---------------------------------------------------------------------------
 
 pub fn build_frame(opcode: u8, data: &[u8], mask: bool) -> Vec<u8> {
     let length = data.len();
@@ -457,11 +483,15 @@ pub fn build_frame(opcode: u8, data: &[u8], mask: bool) -> Vec<u8> {
     result
 }
 
+// ---------------------------------------------------------------------------
+// Connection helpers
+// ---------------------------------------------------------------------------
+
 fn set_sock_opts(stream: &TcpStream) {
     if TCP_NODELAY {
         let _ = stream.set_nodelay(true);
     }
-
+    // Аналог Go: SetKeepAlive(true)+SetKeepAlivePeriod(30s) — детект мёртвых соединений на мобиле.
     let sock = socket2::SockRef::from(stream);
     let ka = socket2::TcpKeepalive::new().with_time(Duration::from_secs(30));
     let _ = sock.set_tcp_keepalive(&ka);
@@ -490,6 +520,7 @@ fn server_name(domain: &str) -> ServerName<'static> {
         .unwrap_or_else(|_| ServerName::IpAddress("127.0.0.1".parse::<IpAddr>().unwrap().into()))
 }
 
+// wsConnectOnce — заголовки 1-в-1 как в Python raw_websocket.py (без User-Agent).
 pub async fn ws_connect_once(
     dial_addr: &str,
     domain: &str,
@@ -530,6 +561,7 @@ pub async fn ws_connect_once(
 
     let (read_half, mut write_half) = tokio::io::split(tls_conn);
 
+    // websocket key
     let mut ws_key_bytes = [0u8; 16];
     rand::thread_rng().fill_bytes(&mut ws_key_bytes);
     let ws_key = base64::engine::general_purpose::STANDARD.encode(ws_key_bytes);
@@ -553,6 +585,7 @@ pub async fn ws_connect_once(
 
     let mut bufreader = BufReader::with_capacity(4096, read_half);
 
+    // читаем заголовки строками
     let mut response_lines: Vec<String> = Vec::new();
     let read_result = tokio::time::timeout(timeout, async {
         loop {
@@ -640,6 +673,7 @@ async fn read_line<R: AsyncReadExt + Unpin>(reader: &mut R) -> Result<String, Ws
     Ok(String::from_utf8_lossy(&buf).to_string())
 }
 
+// wsConnect: пытается ip, при необходимости резолвит DoH
 pub async fn ws_connect(
     ip: &str,
     domain: &str,
@@ -670,6 +704,7 @@ pub async fn ws_connect(
     }
 }
 
+// connectOneWS: перебор доменов
 pub async fn connect_one_ws(ip: &str, domains: &[String]) -> Option<RawWebSocket> {
     for d in domains {
         if let Ok(ws) = ws_connect(ip, d, "/apiws", WS_POOL_CONNECT_TIMEOUT).await {
