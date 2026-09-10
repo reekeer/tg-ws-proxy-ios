@@ -43,11 +43,11 @@ jobs:
         include:
           # Без entitlements: ставится с любым Apple ID, в фоне держится
           # через CoreLocation.
-          - name: sideload-free
+          - name: free
             components: none
-          # Полный набор: нужен profile с Network Extension и App Groups.
-          - name: sideload-full
-            components: wd,la,cc,vpn
+          # С Network Extension: нужен profile с packet-tunnel-provider.
+          - name: vpn
+            components: vpn
     steps:
       - uses: actions/checkout@v4
 
@@ -61,6 +61,6 @@ jobs:
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: tg-ws-proxy-${{ matrix.name }}
-          path: dist/*.ipa
+          name: TgWsProxy-${{ matrix.name }}
+          path: dist/TgWsProxy-${{ matrix.name }}.ipa
           if-no-files-found: error
