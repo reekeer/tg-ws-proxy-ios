@@ -1,6 +1,6 @@
 <h1 align="center">TG WS Proxy iOS</h1>
 
-<h4 align="center">A local MTProto proxy for Telegram on iPhone: Rust core, WebSocket transport, Live Activity, and background operation without a paid Apple Developer account.</h4>
+<h4 align="center">A local MTProto proxy for Telegram on iPhone: Rust core, WebSocket transport, and background operation without a paid Apple Developer account.</h4>
 
 <p align="center">
   <a href="../README.md">Русский 🇷🇺</a>
@@ -75,22 +75,24 @@ Compared with background audio, this approach keeps the connection through phone
 
 Ready-made IPAs are built in GitHub Actions (`.github/workflows/build.yml`) in two variants:
 
-- `tg-ws-proxy-sideload-free` — no entitlements, installs with any Apple ID, stays alive in the background through location;
-- `tg-ws-proxy-sideload-full` — widgets, Live Activity, Control Center and Network Extension; needs a profile with App Groups and Network Extension.
+- `TgWsProxy-free.ipa` — no entitlements, installs with any Apple ID, stays alive in the background through location;
+- `TgWsProxy-vpn.ipa` — with the Network Extension, held in the background by the system tunnel; needs a profile with `packet-tunnel-provider`.
+
+Both are attached to every release, together with a rundown of which one to pick.
 
 Local builds (Xcode plus Rust with the `aarch64-apple-ios` target):
 
 ```sh
-./build.sh -p side -c none          # sideload, app only
-./build.sh -p side -c wd,la,cc,vpn  # sideload with every component
-./build.sh -p sim --install         # simulator
-./build.sh -h                       # platforms and components
+./build.sh -p side -c none   # TgWsProxy-free.ipa
+./build.sh -p side -c vpn    # TgWsProxy-vpn.ipa
+./build.sh -p sim --install  # simulator
+./build.sh -h                # platforms and components
 ```
 
 Platforms: `sim`, `lc` (LiveContainer), `side` (Sideloadly / iLoader / TrollStore), `alt` (AltStore / SideStore).
-Components: `wd` — widget, `la` — Live Activity, `cc` — Control Center, `vpn` — Network Extension, `none` — app only.
+Components: `vpn` — Network Extension, `none` — app only.
 
-LiveContainer cannot load embedded extensions, so components are disabled automatically for the `lc` platform.
+LiveContainer cannot load embedded extensions, so the `vpn` component is disabled automatically for the `lc` platform.
 
 A detailed walkthrough of every installation method lives in [ARCHITECTURE.ru.md](ARCHITECTURE.ru.md).
 

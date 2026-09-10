@@ -94,7 +94,7 @@ Rust-ядро биндится на `127.0.0.1:1443` внутри процесс
    - настройки Cloudflare.
 4. Rust создаёт глобальный `tokio` runtime и TCP-слушатель.
 5. После успешного `bind` возвращается код `0`.
-6. `ProxyViewModel.didStart()` запускает таймер обновления статистики каждую секунду и уведомляет ActivityKit / WidgetKit.
+6. `ProxyViewModel.didStart()` запускает таймер обновления статистики каждую секунду и в локальном режиме включает `BackgroundKeeper`.
 
 ### Подключение Telegram
 
@@ -121,7 +121,6 @@ Rust-ядро биндится на `127.0.0.1:1443` внутри процесс
 |-----------|------|
 | `TgWsProxy` | Основное SwiftUI-приложение: настройки, логи, UI. |
 | `PacketTunnel` | Network Extension, держит Rust-ядро в фоне. |
-| `StatusWidgets` | Home Screen Widget, Live Activity, Dynamic Island, Control Center toggle. |
 | `src-wrapper` | Rust-ядро: TCP-слушатель, MTProto, WebSocket, Cloudflare, балансировка. |
 
 ## Поведение в зависимости от способа установки

@@ -1,6 +1,6 @@
 <h1 align="center">TG WS Proxy iOS</h1>
 
-<h4 align="center">Локальный MTProto-прокси для Telegram на iPhone: Rust-ядро, WebSocket-транспорт, Live Activity и работа в фоне без платного Apple Developer.</h4>
+<h4 align="center">Локальный MTProto-прокси для Telegram на iPhone: Rust-ядро, WebSocket-транспорт и работа в фоне без платного Apple Developer.</h4>
 
 <p align="center">
   <a href="docs/README.md">English 🌐</a>
@@ -75,22 +75,24 @@ iOS не даёт обычному приложению держать TCP-се�
 
 Готовые IPA собираются в GitHub Actions (`.github/workflows/build.yml`), два варианта:
 
-- `tg-ws-proxy-sideload-free` — без entitlements, ставится с любым Apple ID, в фоне держится через геопозицию;
-- `tg-ws-proxy-sideload-full` — виджеты, Live Activity, Control Center и Network Extension; нужен профиль с App Groups и Network Extension.
+- `TgWsProxy-free.ipa` — без entitlements, ставится с любым Apple ID, в фоне держится через геопозицию;
+- `TgWsProxy-vpn.ipa` — с Network Extension, в фоне держится системным туннелем; нужен профиль с `packet-tunnel-provider`.
+
+Оба варианта прикладываются к каждому релизу — там же разбор, какой выбрать.
 
 Локальная сборка (нужны Xcode и Rust с таргетом `aarch64-apple-ios`):
 
 ```sh
-./build.sh -p side -c none          # sideload, только приложение
-./build.sh -p side -c wd,la,cc,vpn  # sideload со всеми компонентами
-./build.sh -p sim --install         # симулятор
-./build.sh -h                       # платформы и компоненты
+./build.sh -p side -c none   # TgWsProxy-free.ipa
+./build.sh -p side -c vpn    # TgWsProxy-vpn.ipa
+./build.sh -p sim --install  # симулятор
+./build.sh -h                # платформы и компоненты
 ```
 
 Платформы: `sim`, `lc` (LiveContainer), `side` (Sideloadly / iLoader / TrollStore), `alt` (AltStore / SideStore).
-Компоненты: `wd` — виджет, `la` — Live Activity, `cc` — Control Center, `vpn` — Network Extension, `none` — только приложение.
+Компоненты: `vpn` — Network Extension, `none` — только приложение.
 
-LiveContainer не умеет загружать вложенные расширения, поэтому для платформы `lc` компоненты отключаются автоматически.
+LiveContainer не умеет загружать вложенные расширения, поэтому для платформы `lc` компонент `vpn` отключается автоматически.
 
 Подробный разбор поведения в каждом способе установки — в [docs/ARCHITECTURE.ru.md](docs/ARCHITECTURE.ru.md).
 
