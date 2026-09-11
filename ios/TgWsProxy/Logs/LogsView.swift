@@ -87,11 +87,17 @@ private struct LogConsole: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 3) {
                     if store.lines.isEmpty {
-                        ContentUnavailableView(
-                            "Логи пусты".tgLoc,
-                            systemImage: "doc.text.magnifyingglass",
-                            description: Text("Запустите прокси, чтобы увидеть вывод Rust-ядра.".tgLoc)
-                        )
+                        VStack(spacing: 8) {
+                            Image(systemName: "doc.text.magnifyingglass")
+                                .font(.largeTitle)
+                                .foregroundStyle(.secondary)
+                            Text("Логи пусты".tgLoc)
+                                .font(.headline)
+                            Text("Запустите прокси, чтобы увидеть вывод Rust-ядра.".tgLoc)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
                         .frame(maxWidth: .infinity, minHeight: 280)
                     }
                     ForEach(Array(store.lines.enumerated()), id: \.offset) { _, line in
@@ -106,7 +112,7 @@ private struct LogConsole: View {
                 .padding(12)
             }
             .scrollIndicators(.hidden)
-            .onChange(of: store.lines.count) { _, _ in
+            .onValueChange(of: store.lines.count) { _ in
                 withAnimation(.easeOut(duration: 0.2)) {
                     proxy.scrollTo("bottom", anchor: .bottom)
                 }

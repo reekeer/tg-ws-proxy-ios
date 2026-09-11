@@ -43,7 +43,7 @@ if [ -n "${SDKROOT:-}" ] && [ ! -d "$SDKROOT" ]; then
   exit 1
 fi
 
-export IPHONEOS_DEPLOYMENT_TARGET="${IPHONEOS_DEPLOYMENT_TARGET:-17.0}"
+export IPHONEOS_DEPLOYMENT_TARGET="${IPHONEOS_DEPLOYMENT_TARGET:-16.0}"
 
 requested_architectures() {
   if [ -n "${ARCHS:-}" ]; then

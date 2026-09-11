@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-blue?style=for-the-badge&logo=gnu&logoColor=white" alt="GPLv3"></a>
-  <img src="https://img.shields.io/badge/iOS-17%2B-black?style=for-the-badge&logo=apple&logoColor=white" alt="iOS 17+">
+  <img src="https://img.shields.io/badge/iOS-16.0--27.0-black?style=for-the-badge&logo=apple&logoColor=white" alt="iOS 16.0-27.0">
   <img src="https://img.shields.io/badge/Swift-SwiftUI-F05138?style=for-the-badge&logo=swift&logoColor=white" alt="SwiftUI">
   <img src="https://img.shields.io/badge/Core-Rust-000000?style=for-the-badge&logo=rust&logoColor=white" alt="Rust">
 </p>
@@ -20,6 +20,8 @@
 ```text
 Telegram → 127.0.0.1:1443 → Rust-ядро → WSS / Cloudflare → Telegram DC
 ```
+
+Поддерживается **iOS 16.0 – 27.0**.
 
 > [!CAUTION]
 > Это экспериментальный сетевой инструмент. Используйте на свой риск: приложение не проходило аудит безопасности.

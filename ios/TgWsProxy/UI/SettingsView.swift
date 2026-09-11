@@ -187,7 +187,7 @@ struct SettingsView: View {
 
         }
         .scrollContentBackground(.hidden)
-        .onChange(of: settings.notifications) { _, on in
+        .onValueChange(of: settings.notifications) { on in
             if on { NotificationManager.requestAuthorization() }
         }
     }
